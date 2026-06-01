@@ -36,15 +36,23 @@ def register(request):
                 login_type='password'
             )
 
-            login(request, user)
-            messages.success(request, '注册成功，欢迎开始你的第一次跑步姿态分析。')
+            raw_password = form.cleaned_data.get('password1')
+            authenticated_user = authenticate(
+                request,
+                username=user.username,
+                password=raw_password
+            )
+            if authenticated_user is not None:
+                login(request, authenticated_user)
+
+            messages.success(request, '注册成功，欢迎开始你的第一次跑姿分析。')
             return redirect('main:dashboard')
+
         messages.error(request, '注册失败，请检查填写的信息。')
     else:
         form = CustomUserCreationForm()
 
     return render(request, 'users/register.html', {'form': form})
-
 
 def user_login(request):
     if request.user.is_authenticated:
