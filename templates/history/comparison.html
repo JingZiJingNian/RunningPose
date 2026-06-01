@@ -1,0 +1,237 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ session.name }} - 分析对比{% endblock %}
+
+{% block extra_css %}
+<style>
+    .comparison-table th {
+        position: sticky;
+        top: 0;
+        background: white;
+        z-index: 10;
+    }
+    .metric-improved {
+        background-color: #d4edda;
+    }
+    .metric-declined {
+        background-color: #f8d7da;
+    }
+    .comparison-card {
+        border: 2px solid transparent;
+        transition: all 0.3s;
+    }
+    .comparison-card:hover {
+        border-color: #007bff;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- 页面头部 -->
+    <div class="row mb-4">
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'history:list' %}">历史记录</a></li>
+                    <li class="breadcrumb-item active">分析对比</li>
+                </ol>
+            </nav>
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h1 class="display-4 mb-2">{{ session.name }}</h1>
+                    {% if session.description %}
+                    <p class="text-muted">{{ session.description }}</p>
+                    {% endif %}
+                </div>
+                <a href="{% url 'history:list' %}" class="btn btn-outline-primary">
+                    <i class="bi bi-arrow-left"></i> 返回列表
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 对比分析 -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="bi bi-bar-chart"></i> 指标对比</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered comparison-table">
+                    <thead>
+                        <tr>
+                            <th>指标</th>
+                            {% for item in comparison_items %}
+                            <th class="text-center">
+                                <div class="fw-bold">{{ item.analysis.title }}</div>
+                                <small class="text-muted">{{ item.analysis.analyzed_at|date:"m-d" }}</small>
+                            </th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- 步频对比 -->
+                        <tr>
+                            <td class="fw-bold">步频 (步/分钟)</td>
+                            {% for item in comparison_items %}
+                            <td class="text-center {% if forloop.counter0 > 0 and item.analysis.cadence and comparison_items.0.analysis.cadence %}{% if item.analysis.cadence > comparison_items.0.analysis.cadence %}metric-improved{% else %}metric-declined{% endif %}{% endif %}">
+                                {{ item.analysis.cadence|default:"--" }}
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        <!-- 速度对比 -->
+                        <tr>
+                            <td class="fw-bold">速度 (km/h)</td>
+                            {% for item in comparison_items %}
+                            <td class="text-center {% if forloop.counter0 > 0 and item.analysis.speed and comparison_items.0.analysis.speed %}{% if item.analysis.speed > comparison_items.0.analysis.speed %}metric-improved{% else %}metric-declined{% endif %}{% endif %}">
+                                {{ item.analysis.speed|default:"--" }}
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        <!-- 步幅对比 -->
+                        <tr>
+                            <td class="fw-bold">步幅 (米)</td>
+                            {% for item in comparison_items %}
+                            <td class="text-center {% if forloop.counter0 > 0 and item.analysis.stride_length and comparison_items.0.analysis.stride_length %}{% if item.analysis.stride_length > comparison_items.0.analysis.stride_length %}metric-improved{% else %}metric-declined{% endif %}{% endif %}">
+                                {{ item.analysis.stride_length|default:"--" }}
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        <!-- 问题数量对比 -->
+                        <tr>
+                            <td class="fw-bold">问题数量</td>
+                            {% for item in comparison_items %}
+                            <td class="text-center {% if forloop.counter0 > 0 and item.analysis.issues_count and comparison_items.0.analysis.issues_count %}{% if item.analysis.issues_count < comparison_items.0.analysis.issues_count %}metric-improved{% else %}metric-declined{% endif %}{% endif %}">
+                                {{ item.analysis.issues_count }}
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        <!-- 分析质量 -->
+                        <tr>
+                            <td class="fw-bold">分析质量</td>
+                            {% for item in comparison_items %}
+                            <td class="text-center">
+                                <span class="badge bg-{{ item.analysis.get_quality_color }}">
+                                    {{ item.analysis.get_analysis_quality_display }}
+                                </span>
+                            </td>
+                            {% endfor %}
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 详细分析记录 -->
+    <div class="row">
+        {% for item in comparison_items %}
+        <div class="col-lg-6 mb-4">
+            <div class="card comparison-card h-100">
+                <div class="card-header bg-{{ item.analysis.get_quality_color }} text-white">
+                    <h6 class="mb-0">{{ item.analysis.title }}</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <small class="text-muted">分析时间</small>
+                            <p class="mb-0">{{ item.analysis.analyzed_at|date:"Y-m-d H:i" }}</p>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted">视频时长</small>
+                            <p class="mb-0">{{ item.analysis.duration|floatformat:1 }}秒</p>
+                        </div>
+                    </div>
+
+                    <!-- 关键指标 -->
+                    <div class="row g-2 mb-3">
+                        <div class="col-4 text-center">
+                            <span class="badge bg-primary">步频</span>
+                            <div class="fw-bold">{{ item.analysis.cadence|default:"--" }}</div>
+                        </div>
+                        <div class="col-4 text-center">
+                            <span class="badge bg-success">速度</span>
+                            <div class="fw-bold">{{ item.analysis.speed|default:"--" }}</div>
+                        </div>
+                        <div class="col-4 text-center">
+                            <span class="badge bg-info">步幅</span>
+                            <div class="fw-bold">{{ item.analysis.stride_length|default:"--" }}</div>
+                        </div>
+                    </div>
+
+                    <!-- 问题统计 -->
+                    <div class="mb-3">
+                        <small class="text-muted">问题统计:</small>
+                        <div>
+                            {% if item.analysis.issues_count > 0 %}
+                                <span class="badge bg-danger me-1">{{ item.analysis.high_severity_issues }} 严重</span>
+                                <span class="badge bg-warning me-1">{{ item.analysis.medium_severity_issues }} 中等</span>
+                                <span class="badge bg-info">{{ item.analysis.low_severity_issues }} 轻微</span>
+                            {% else %}
+                                <span class="badge bg-success">无问题</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- 操作按钮 -->
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'history:detail' item.analysis.video_upload_id %}" 
+                           class="btn btn-outline-primary btn-sm flex-fill">
+                            <i class="bi bi-eye"></i> 查看详情
+                        </a>
+                        <a href="{% url 'analysis:results' item.analysis.video_upload_id %}" 
+                           class="btn btn-outline-success btn-sm">
+                            <i class="bi bi-graph-up"></i> 3D视图
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- 对比总结 -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="bi bi-lightbulb"></i> 对比总结</h5>
+        </div>
+        <div class="card-body">
+            {% if comparison_items|length >= 2 %}
+                {% with first=comparison_items.0.analysis last=comparison_items|last|slice:":1"|first|default:comparison_items.0.analysis %}
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>改进方面:</h6>
+                        <ul>
+                            {% if last.issues_count < first.issues_count %}
+                            <li>问题数量减少 {{ first.issues_count }} → {{ last.issues_count }}</li>
+                            {% endif %}
+                            {% if last.cadence and first.cadence and last.cadence > first.cadence %}
+                            <li>步频提升 {{ first.cadence|floatformat:0 }} → {{ last.cadence|floatformat:0 }}</li>
+                            {% endif %}
+                            {% if last.speed and first.speed and last.speed > first.speed %}
+                            <li>速度提升 {{ first.speed|floatformat:1 }} → {{ last.speed|floatformat:1 }}</li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>需要注意:</h6>
+                        <ul>
+                            {% if last.issues_count > first.issues_count %}
+                            <li>问题数量增加，需要注意姿态问题</li>
+                            {% endif %}
+                            {% if last.high_severity_issues > 0 %}
+                            <li>存在 {{ last.high_severity_issues }} 个严重问题需要优先解决</li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+                {% endwith %}
+            {% else %}
+                <p class="text-muted">需要至少两个分析记录才能生成对比总结。</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

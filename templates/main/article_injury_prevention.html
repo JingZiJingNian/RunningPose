@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}常见跑步损伤及预防方法{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="max-width: 900px;">
+    <a href="{% url 'main:home' %}" class="btn btn-outline-secondary mb-4">
+        <i class="bi bi-arrow-left"></i> 返回首页
+    </a>
+
+    <h1 class="fw-bold mb-3">常见跑步损伤及预防方法</h1>
+    <p class="text-muted mb-4">理解常见损伤背后的原因，并通过训练安排、动作优化和恢复管理降低风险。</p>
+
+    <img src="{% static 'images/article-injury-prevention.jpg' %}" class="img-fluid rounded-4 mb-4" alt="跑步损伤预防">
+
+    <h3 class="fw-bold mt-4">1. 常见跑步损伤有哪些</h3>
+    <p>跑步中较常见的问题包括膝前侧不适、髂胫束紧张、跟腱不适、足底压力过大以及小腿反复酸痛等。这些不适往往不是单一动作错误造成的，而是训练负荷、恢复不足和动作习惯共同作用的结果。</p>
+
+    <h3 class="fw-bold mt-4">2. 训练量增加过快是高风险因素</h3>
+    <p>很多损伤不是因为一次跑得太差，而是因为在短时间内突然增加了跑量、强度或频率。身体组织需要时间适应刺激，增长过快时，关节、肌腱和骨骼往往来不及完成适应。</p>
+
+    <h3 class="fw-bold mt-4">3. 动作问题会放大局部压力</h3>
+    <p>例如前伸落脚、支撑拖沓、左右不对称、上身控制不足等，都可能让某些部位长期承受额外压力。视频分析的价值在于，它能帮助你发现这些持续存在而非偶发的动作倾向。</p>
+
+    <h3 class="fw-bold mt-4">4. 力量与稳定性训练同样重要</h3>
+    <p>单纯跑步并不能自动补齐所有短板。臀部、核心、小腿和足踝的力量与稳定性训练，往往是改善动作控制和减少单侧代偿的重要基础。</p>
+
+    <h3 class="fw-bold mt-4">5. 恢复管理不能忽视</h3>
+    <p>睡眠不足、训练安排过密、长期疲劳堆积，都会让动作质量下降，也会增加损伤风险。高质量恢复不是“附属项”，而是训练系统的一部分。</p>
+
+    <h3 class="fw-bold mt-4">总结</h3>
+    <p>预防损伤不是只盯着疼痛出现后的处理，而是从训练量管理、动作优化、力量训练和恢复安排几个方面同时入手。越早建立系统意识，越容易长期稳定地跑下去。</p>
+</div>
+{% endblock %}

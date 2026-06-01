@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+
+{% block title %}登录历史 - GaitFix{% endblock %}
+
+{% block extra_css %}
+<style>
+    .history-shell {
+        padding: 3rem 0 5rem;
+    }
+
+    .glass-card {
+        border: 1px solid rgba(255,255,255,.72);
+        border-radius: 28px;
+        background: rgba(255,255,255,.88);
+        box-shadow: 0 22px 50px rgba(15,23,42,.08);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+    }
+
+    .hero-card {
+        padding: 1.8rem;
+        margin-bottom: 1.4rem;
+        background: linear-gradient(135deg, rgba(79,70,229,.96), rgba(14,165,233,.90));
+        color: #fff;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+            radial-gradient(circle at 18% 25%, rgba(255,255,255,.14), transparent 22%),
+            radial-gradient(circle at 80% 35%, rgba(255,255,255,.10), transparent 18%);
+    }
+
+    .hero-inner {
+        position: relative;
+        z-index: 2;
+    }
+
+    .hero-kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: .45rem;
+        border-radius: 999px;
+        padding: .45rem .8rem;
+        background: rgba(255,255,255,.12);
+        border: 1px solid rgba(255,255,255,.18);
+        font-size: .88rem;
+        font-weight: 700;
+        margin-bottom: .9rem;
+    }
+
+    .hero-title {
+        font-size: 2rem;
+        font-weight: 900;
+        line-height: 1.08;
+        margin-bottom: .55rem;
+        letter-spacing: -0.03em;
+    }
+
+    .hero-desc {
+        color: rgba(255,255,255,.92);
+        line-height: 1.8;
+        margin: 0;
+    }
+
+    .content-card {
+        padding: 1.4rem;
+    }
+
+    .section-title {
+        font-size: 1.12rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin-bottom: .35rem;
+    }
+
+    .section-subtitle {
+        color: #64748b;
+        line-height: 1.75;
+        margin-bottom: 1rem;
+    }
+
+    .history-table-wrap {
+        overflow: hidden;
+        border-radius: 22px;
+        border: 1px solid rgba(15,23,42,.06);
+    }
+
+    .history-table {
+        margin-bottom: 0;
+    }
+
+    .history-table thead th {
+        background: rgba(79,70,229,.06);
+        color: #334155;
+        font-weight: 800;
+        border-bottom: 1px solid rgba(15,23,42,.06);
+        white-space: nowrap;
+    }
+
+    .history-table td {
+        vertical-align: middle;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 2.8rem 1rem;
+        color: #64748b;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container history-shell">
+    <div class="hero-card glass-card">
+        <div class="hero-inner">
+            <div class="hero-kicker">
+                <i class="bi bi-clock-history"></i>
+                <span>账户访问记录</span>
+            </div>
+            <div class="hero-title">登录历史</div>
+            <p class="hero-desc">
+                查看最近的登录时间、登录方式、IP 地址和设备信息，帮助你了解账户访问情况。
+            </p>
+        </div>
+    </div>
+
+    <div class="glass-card content-card">
+        <div class="section-title">最近登录记录</div>
+        <p class="section-subtitle">如果发现异常设备或异常 IP 登录，请尽快修改密码并检查账户安全设置。</p>
+
+        {% if login_history %}
+            <div class="history-table-wrap">
+                <div class="table-responsive">
+                    <table class="table table-hover history-table">
+                        <thead>
+                            <tr>
+                                <th>登录时间</th>
+                                <th>登录方式</th>
+                                <th>IP 地址</th>
+                                <th>设备信息</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for record in login_history %}
+                            <tr>
+                                <td>{{ record.login_time|date:"Y-m-d H:i" }}</td>
+                                <td>
+                                    <span class="badge
+                                        {% if record.login_type == 'password' %}bg-primary
+                                        {% elif record.login_type == 'qq' %}bg-info
+                                        {% elif record.login_type == 'wechat' %}bg-success
+                                        {% elif record.login_type == 'weibo' %}bg-warning text-dark
+                                        {% else %}bg-secondary{% endif %}">
+                                        {{ record.get_login_type_display }}
+                                    </span>
+                                </td>
+                                <td>{{ record.ip_address }}</td>
+                                <td class="text-muted small">{{ record.user_agent|truncatechars:70 }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="bi bi-clock-history fs-1 d-block mb-3"></i>
+                暂无登录记录
+            </div>
+        {% endif %}
+
+        <div class="mt-4">
+            <a href="{% url 'users:profile' %}" class="btn btn-outline-secondary rounded-pill px-4">
+                <i class="bi bi-arrow-left me-2"></i>返回个人资料
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

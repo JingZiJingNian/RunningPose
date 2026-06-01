@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}正确的跑步姿势全解析{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="max-width: 900px;">
+    <a href="{% url 'main:home' %}" class="btn btn-outline-secondary mb-4">
+        <i class="bi bi-arrow-left"></i> 返回首页
+    </a>
+
+    <h1 class="fw-bold mb-3">正确的跑步姿势全解析</h1>
+    <p class="text-muted mb-4">从身体整体姿态、摆臂、落脚和步频几个方面，建立更自然、更高效的跑步动作模式。</p>
+
+    <img src="{% static 'images/article-running-posture.jpg' %}" class="img-fluid rounded-4 mb-4" alt="正确的跑步姿势">
+
+    <h3 class="fw-bold mt-4">1. 保持身体整体放松但稳定</h3>
+    <p>跑步时不需要刻意僵硬挺胸，也不应塌腰含胸。更理想的状态是头部自然抬起，目光看向前方，肩颈放松，核心轻度收紧，让身体在稳定中保持流畅。</p>
+
+    <h3 class="fw-bold mt-4">2. 上身前倾应来自整体，而不是折腰</h3>
+    <p>合理的前倾有助于向前推进，但这种前倾应当来自全身姿态，而不是从腰部折下去。折腰式前倾容易破坏身体重心位置，也会影响落脚和摆臂节奏。</p>
+
+    <h3 class="fw-bold mt-4">3. 摆臂以前后为主</h3>
+    <p>摆臂的主要作用是帮助身体维持节奏和平衡。理想状态下，双臂应自然屈肘，以前后方向摆动为主，避免明显横摆，否则容易带动躯干左右扭转。</p>
+
+    <h3 class="fw-bold mt-4">4. 落脚点尽量接近身体重心下方</h3>
+    <p>如果脚明显落在身体前方，往往更容易形成过度跨步，带来支撑拖沓和制动效应。更合理的落脚方式是让落点更接近身体下方，并通过步频和节奏控制步态。</p>
+
+    <h3 class="fw-bold mt-4">5. 步频与步幅应相互协调</h3>
+    <p>很多跑者会本能地通过迈大步来追求速度，但这并不一定高效。更常见也更稳妥的方式，是先提升节奏感，让步频和步幅形成自然协调，而不是单独放大某一项。</p>
+
+    <h3 class="fw-bold mt-4">总结</h3>
+    <p>正确跑姿不是一个僵硬的固定动作模板，而是一个兼顾节奏、稳定性与推进效率的动态平衡。通过视频分析和反复复盘，你会更容易找到适合自己的跑步动作组织方式。</p>
+</div>
+{% endblock %}

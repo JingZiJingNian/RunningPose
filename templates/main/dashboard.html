@@ -1,0 +1,597 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}分析中心 - GaitFix{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --db-bg: #f4f7fc;
+        --db-card: rgba(255,255,255,.88);
+        --db-line: rgba(15,23,42,.08);
+        --db-text: #0f172a;
+        --db-muted: #64748b;
+        --db-brand: #4f46e5;
+        --db-brand-2: #0ea5e9;
+        --db-good: #16a34a;
+        --db-warn: #f59e0b;
+        --db-danger: #ef4444;
+        --db-shadow: 0 20px 50px rgba(15,23,42,.08);
+    }
+
+    body {
+        background:
+            radial-gradient(circle at top left, rgba(79,70,229,.07), transparent 24%),
+            radial-gradient(circle at top right, rgba(14,165,233,.08), transparent 26%),
+            linear-gradient(180deg, #f8fbff 0%, #f4f6fb 100%);
+    }
+
+    .dashboard-shell {
+        padding: 3rem 0 5rem;
+    }
+
+    .glass-card {
+        background: var(--db-card);
+        border: 1px solid rgba(255,255,255,.68);
+        border-radius: 28px;
+        box-shadow: var(--db-shadow);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+    }
+
+    .hero-card {
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, rgba(79,70,229,.96), rgba(14,165,233,.90));
+        color: #fff;
+        box-shadow: 0 30px 80px rgba(79,70,229,.18);
+    }
+
+    .hero-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+            radial-gradient(circle at 18% 25%, rgba(255,255,255,.14), transparent 22%),
+            radial-gradient(circle at 80% 35%, rgba(255,255,255,.10), transparent 18%);
+        pointer-events: none;
+    }
+
+    .hero-inner {
+        position: relative;
+        z-index: 2;
+    }
+
+    .hero-kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: .45rem;
+        border-radius: 999px;
+        padding: .45rem .85rem;
+        background: rgba(255,255,255,.12);
+        border: 1px solid rgba(255,255,255,.18);
+        font-size: .9rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .hero-title {
+        font-size: clamp(2rem, 4vw, 3.3rem);
+        font-weight: 900;
+        line-height: 1.05;
+        margin-bottom: .7rem;
+        letter-spacing: -0.03em;
+    }
+
+    .hero-desc {
+        max-width: 760px;
+        color: rgba(255,255,255,.92);
+        line-height: 1.85;
+        margin-bottom: 1.2rem;
+    }
+
+    .hero-actions {
+        display: flex;
+        gap: .9rem;
+        flex-wrap: wrap;
+    }
+
+    .hero-btn-primary {
+        border: none;
+        border-radius: 18px;
+        padding: .95rem 1.3rem;
+        font-weight: 800;
+        background: #fff;
+        color: #312e81;
+    }
+
+    .hero-btn-outline {
+        border-radius: 18px;
+        padding: .95rem 1.25rem;
+        font-weight: 800;
+        border: 1px solid rgba(255,255,255,.24);
+        color: #fff;
+        background: rgba(255,255,255,.08);
+    }
+
+    .hero-btn-primary:hover,
+    .hero-btn-outline:hover {
+        transform: translateY(-2px);
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .stat-card {
+        padding: 1.25rem;
+    }
+
+    .stat-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        align-items: flex-start;
+        margin-bottom: .9rem;
+    }
+
+    .stat-label {
+        color: var(--db-muted);
+        font-size: .86rem;
+        margin-bottom: .45rem;
+    }
+
+    .stat-value {
+        font-size: 1.8rem;
+        font-weight: 900;
+        line-height: 1;
+        color: var(--db-text);
+    }
+
+    .stat-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 18px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, rgba(79,70,229,.12), rgba(14,165,233,.15));
+        color: #4338ca;
+        font-size: 1.3rem;
+    }
+
+    .section-card {
+        padding: 1.4rem;
+    }
+
+    .page-grid {
+        display: grid;
+        grid-template-columns: 1.05fr .95fr;
+        gap: 1.4rem;
+        align-items: start;
+    }
+
+    .section-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .section-title {
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: var(--db-text);
+        margin-bottom: .25rem;
+    }
+
+    .section-subtitle {
+        color: var(--db-muted);
+        margin: 0;
+        line-height: 1.75;
+    }
+
+    .quick-actions {
+        display: grid;
+        gap: .8rem;
+    }
+
+    .quick-btn {
+        min-height: 54px;
+        border-radius: 18px;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .metric-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: .9rem;
+    }
+
+    .metric-item {
+        border-radius: 20px;
+        padding: 1rem;
+        background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(248,250,252,.92));
+        border: 1px solid rgba(15,23,42,.05);
+    }
+
+    .metric-name {
+        color: var(--db-muted);
+        font-size: .82rem;
+        margin-bottom: .4rem;
+    }
+
+    .metric-value {
+        color: var(--db-text);
+        font-weight: 900;
+        font-size: 1.25rem;
+        line-height: 1.1;
+    }
+
+    .record-list {
+        display: grid;
+        gap: .9rem;
+    }
+
+    .record-item {
+        border-radius: 22px;
+        padding: 1rem 1.05rem;
+        background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(250,251,255,.94));
+        border: 1px solid rgba(15,23,42,.05);
+        box-shadow: 0 10px 20px rgba(15,23,42,.04);
+    }
+
+    .record-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: .6rem;
+    }
+
+    .record-title {
+        font-weight: 800;
+        color: var(--db-text);
+        margin-bottom: .2rem;
+        line-height: 1.45;
+    }
+
+    .record-meta {
+        color: var(--db-muted);
+        font-size: .9rem;
+    }
+
+    .record-badge {
+        border-radius: 999px;
+        padding: .35rem .65rem;
+        font-size: .76rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .record-badge.warn {
+        background: rgba(245,158,11,.14);
+        color: #b45309;
+    }
+
+    .record-badge.good {
+        background: rgba(22,163,74,.12);
+        color: #166534;
+    }
+
+    .record-actions {
+        display: flex;
+        gap: .7rem;
+        flex-wrap: wrap;
+        margin-top: .7rem;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 2.5rem 1.2rem;
+    }
+
+    .empty-icon {
+        width: 86px;
+        height: 86px;
+        margin: 0 auto 1rem;
+        border-radius: 26px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, rgba(79,70,229,.12), rgba(14,165,233,.15));
+        color: #4338ca;
+        font-size: 2rem;
+    }
+
+    .note-list {
+        display: grid;
+        gap: .7rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .note-item {
+        display: flex;
+        align-items: flex-start;
+        gap: .65rem;
+        color: #334155;
+        line-height: 1.75;
+    }
+
+    .note-item i {
+        color: var(--db-brand);
+        margin-top: .15rem;
+    }
+
+    @media (max-width: 1199px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .page-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .dashboard-shell {
+            padding-top: 2rem;
+        }
+
+        .hero-card,
+        .section-card,
+        .stat-card {
+            padding: 1.2rem;
+        }
+
+        .stats-grid,
+        .metric-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .hero-actions,
+        .record-actions {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container dashboard-shell">
+    <div class="hero-card glass-card">
+        <div class="hero-inner">
+            <div class="hero-kicker">
+                <i class="bi bi-grid-1x2"></i>
+                <span>个人分析中心</span>
+            </div>
+            <h1 class="hero-title">欢迎回来，{{ request.user.username }}</h1>
+            <p class="hero-desc">
+                在这里快速查看你的分析进度、历史记录和最近一次分析结果。你可以继续上传新视频，也可以回看过去的报告和问题诊断。
+            </p>
+            <div class="hero-actions">
+                <a href="{% url 'analysis:upload' %}" class="btn hero-btn-primary">
+                    <i class="bi bi-camera-video me-2"></i>开始新的分析
+                </a>
+                <a href="{% url 'history:list' %}" class="btn hero-btn-outline">
+                    <i class="bi bi-clock-history me-2"></i>查看历史记录
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="glass-card stat-card">
+            <div class="stat-top">
+                <div>
+                    <div class="stat-label">总分析次数</div>
+                    <div class="stat-value">{{ total_analyses }}</div>
+                </div>
+                <div class="stat-icon"><i class="bi bi-camera-video"></i></div>
+            </div>
+        </div>
+
+        <div class="glass-card stat-card">
+            <div class="stat-top">
+                <div>
+                    <div class="stat-label">已完成分析</div>
+                    <div class="stat-value">{{ completed_analyses }}</div>
+                </div>
+                <div class="stat-icon"><i class="bi bi-check-circle"></i></div>
+            </div>
+        </div>
+
+        <div class="glass-card stat-card">
+            <div class="stat-top">
+                <div>
+                    <div class="stat-label">处理中 / 待处理</div>
+                    <div class="stat-value">{{ processing_analyses }}</div>
+                </div>
+                <div class="stat-icon"><i class="bi bi-hourglass-split"></i></div>
+            </div>
+        </div>
+
+        <div class="glass-card stat-card">
+            <div class="stat-top">
+                <div>
+                    <div class="stat-label">存在问题的记录</div>
+                    <div class="stat-value">{{ total_issue_records }}</div>
+                </div>
+                <div class="stat-icon"><i class="bi bi-exclamation-circle"></i></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-grid">
+        <div class="glass-card section-card">
+            <div class="section-head">
+                <div>
+                    <div class="section-title">最近分析记录</div>
+                    <p class="section-subtitle">快速回顾最近几次分析，继续查看摘要或打开完整报告。</p>
+                </div>
+                <a href="{% url 'history:list' %}" class="btn btn-outline-primary rounded-pill px-3">
+                    全部记录
+                </a>
+            </div>
+
+            {% if recent_histories %}
+                <div class="record-list">
+                    {% for item in recent_histories %}
+                    <div class="record-item">
+                        <div class="record-top">
+                            <div>
+                                <div class="record-title">{{ item.title }}</div>
+                                <div class="record-meta">
+                                    <i class="bi bi-calendar-event me-1"></i>
+                                    {{ item.analyzed_at|date:"Y-m-d H:i" }}
+                                    <span class="mx-2">·</span>
+                                    {{ item.duration|floatformat:1 }} 秒
+                                </div>
+                            </div>
+
+                            {% if item.issues_count > 0 %}
+                                <span class="record-badge warn">{{ item.issues_count }} 项需关注</span>
+                            {% else %}
+                                <span class="record-badge good">整体较稳定</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="record-actions">
+                            <a href="{% url 'history:detail' item.video_upload_id %}" class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                                <i class="bi bi-eye me-1"></i>查看摘要
+                            </a>
+                            <a href="{% url 'analysis:results' item.video_upload_id %}" class="btn btn-primary btn-sm rounded-pill px-3">
+                                <i class="bi bi-bar-chart-line me-1"></i>完整报告
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="bi bi-camera-video"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">你还没有分析记录</h4>
+                    <p class="text-muted mb-4">上传第一段跑步视频后，这里会显示你的最近分析记录和报告入口。</p>
+                    <a href="{% url 'analysis:upload' %}" class="btn btn-primary rounded-pill px-4">
+                        <i class="bi bi-camera-video me-2"></i>开始第一次分析
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="d-grid gap-3">
+            <div class="glass-card section-card">
+                <div class="section-title">快速操作</div>
+                <p class="section-subtitle">你最常用的入口都在这里。</p>
+
+                <div class="quick-actions">
+                    <a href="{% url 'analysis:upload' %}" class="btn btn-primary quick-btn">
+                        <i class="bi bi-camera-video me-2"></i>上传新视频
+                    </a>
+                    <a href="{% url 'history:list' %}" class="btn btn-outline-primary quick-btn">
+                        <i class="bi bi-clock-history me-2"></i>查看历史记录
+                    </a>
+                    <a href="{% url 'users:profile' %}" class="btn btn-outline-secondary quick-btn">
+                        <i class="bi bi-person me-2"></i>编辑个人信息
+                    </a>
+                </div>
+            </div>
+
+            <div class="glass-card section-card">
+                <div class="section-title">最近一次分析摘要</div>
+                <p class="section-subtitle">如果你最近完成过分析，这里会显示关键指标概览。</p>
+
+                {% if latest_history %}
+                    <div class="metric-grid">
+                        <div class="metric-item">
+                            <div class="metric-name">步频</div>
+                            <div class="metric-value">
+                                {% if latest_metrics.cadence.value %}{{ latest_metrics.cadence.value }} spm{% else %}--{% endif %}
+                            </div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-name">触地时间</div>
+                            <div class="metric-value">
+                                {% if latest_metrics.ground_contact_time.value %}{{ latest_metrics.ground_contact_time.value }} ms{% else %}--{% endif %}
+                            </div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-name">躯干前倾角</div>
+                            <div class="metric-value">
+                                {% if latest_metrics.trunk_lean_angle.value %}{{ latest_metrics.trunk_lean_angle.value }}°{% else %}--{% endif %}
+                            </div>
+                        </div>
+                        <div class="metric-item">
+                            <div class="metric-name">过度跨步指数</div>
+                            <div class="metric-value">
+                                {% if latest_metrics.overstride_index.value %}{{ latest_metrics.overstride_index.value }}{% else %}--{% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="text-muted">暂无可显示的分析摘要。</div>
+                {% endif %}
+            </div>
+
+            <div class="glass-card section-card">
+                <div class="section-title">本周概览</div>
+                <p class="section-subtitle">帮助你快速判断当前使用情况。</p>
+
+                <div class="metric-grid">
+                    <div class="metric-item">
+                        <div class="metric-name">稳定记录</div>
+                        <div class="metric-value">{{ stable_records }}</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-name">失败记录</div>
+                        <div class="metric-value">{{ failed_analyses }}</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-name">平均问题数</div>
+                        <div class="metric-value">{{ avg_issues }}</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-name">最近状态</div>
+                        <div class="metric-value">
+                            {% if latest_history %}已分析{% else %}暂无记录{% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card section-card">
+                <div class="section-title">使用建议</div>
+                <p class="section-subtitle">让你的分析结果更有参考价值。</p>
+
+                <ul class="note-list">
+                    <li class="note-item">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <span>尽量保持相同拍摄角度和相近配速，便于多次分析结果之间的对比。</span>
+                    </li>
+                    <li class="note-item">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <span>如果问题诊断较多，建议优先关注高优先级且高置信度的项目。</span>
+                    </li>
+                    <li class="note-item">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <span>定期复盘历史记录，比只看单次分析更容易发现训练后的变化趋势。</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

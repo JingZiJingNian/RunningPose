@@ -1,0 +1,463 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}关于 GaitFix{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --ab-bg: #f4f7fc;
+        --ab-card: rgba(255,255,255,.88);
+        --ab-line: rgba(15,23,42,.08);
+        --ab-text: #0f172a;
+        --ab-muted: #64748b;
+        --ab-brand: #4f46e5;
+        --ab-brand-2: #0ea5e9;
+        --ab-shadow: 0 20px 50px rgba(15,23,42,.08);
+    }
+
+    body {
+        background:
+            radial-gradient(circle at top left, rgba(79,70,229,.07), transparent 24%),
+            radial-gradient(circle at top right, rgba(14,165,233,.08), transparent 26%),
+            linear-gradient(180deg, #f8fbff 0%, #f4f6fb 100%);
+    }
+
+    .about-shell {
+        padding: 3rem 0 5rem;
+    }
+
+    .glass-card {
+        background: var(--ab-card);
+        border: 1px solid rgba(255,255,255,.68);
+        border-radius: 28px;
+        box-shadow: var(--ab-shadow);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+    }
+
+    .hero-card {
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, rgba(79,70,229,.96), rgba(14,165,233,.90));
+        color: #fff;
+        box-shadow: 0 30px 80px rgba(79,70,229,.18);
+    }
+
+    .hero-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+            radial-gradient(circle at 18% 25%, rgba(255,255,255,.15), transparent 22%),
+            radial-gradient(circle at 80% 35%, rgba(255,255,255,.10), transparent 18%);
+        pointer-events: none;
+    }
+
+    .hero-inner {
+        position: relative;
+        z-index: 2;
+    }
+
+    .hero-kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: .45rem;
+        border-radius: 999px;
+        padding: .45rem .85rem;
+        background: rgba(255,255,255,.12);
+        border: 1px solid rgba(255,255,255,.18);
+        font-size: .9rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .hero-title {
+        font-size: clamp(2rem, 4vw, 3.4rem);
+        font-weight: 900;
+        line-height: 1.04;
+        margin-bottom: .8rem;
+        letter-spacing: -0.03em;
+    }
+
+    .hero-desc {
+        max-width: 780px;
+        color: rgba(255,255,255,.92);
+        line-height: 1.9;
+        margin-bottom: 0;
+    }
+
+    .section-card {
+        padding: 1.5rem;
+        margin-bottom: 1.4rem;
+    }
+
+    .section-title {
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: var(--ab-text);
+        margin-bottom: .35rem;
+    }
+
+    .section-subtitle {
+        color: var(--ab-muted);
+        line-height: 1.8;
+        margin-bottom: 1rem;
+    }
+
+    .intro-grid {
+        display: grid;
+        grid-template-columns: 1.05fr .95fr;
+        gap: 1.4rem;
+        align-items: start;
+    }
+
+    .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+    }
+
+    .feature-card {
+        border-radius: 22px;
+        padding: 1.2rem;
+        background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(248,250,252,.92));
+        border: 1px solid rgba(15,23,42,.05);
+        box-shadow: 0 12px 28px rgba(15,23,42,.05);
+        height: 100%;
+    }
+
+    .feature-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 18px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, rgba(79,70,229,.12), rgba(14,165,233,.15));
+        color: #4338ca;
+        font-size: 1.25rem;
+        margin-bottom: .9rem;
+    }
+
+    .feature-title {
+        font-weight: 800;
+        color: var(--ab-text);
+        margin-bottom: .45rem;
+    }
+
+    .feature-text {
+        color: var(--ab-muted);
+        line-height: 1.75;
+        margin: 0;
+    }
+
+    .method-list {
+        display: grid;
+        gap: .85rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .method-item {
+        display: flex;
+        align-items: flex-start;
+        gap: .8rem;
+        padding: .9rem 1rem;
+        border-radius: 20px;
+        background: rgba(255,255,255,.86);
+        border: 1px solid rgba(15,23,42,.05);
+    }
+
+    .method-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, rgba(79,70,229,.10), rgba(14,165,233,.12));
+        color: #4338ca;
+        flex-shrink: 0;
+    }
+
+    .method-title {
+        font-weight: 800;
+        color: var(--ab-text);
+        margin-bottom: .2rem;
+    }
+
+    .method-text {
+        color: var(--ab-muted);
+        line-height: 1.75;
+        margin: 0;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+    }
+
+    .stat-card {
+        border-radius: 22px;
+        padding: 1.2rem;
+        background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(248,250,252,.92));
+        border: 1px solid rgba(15,23,42,.05);
+        box-shadow: 0 12px 28px rgba(15,23,42,.05);
+    }
+
+    .stat-label {
+        color: var(--ab-muted);
+        font-size: .84rem;
+        margin-bottom: .45rem;
+    }
+
+    .stat-value {
+        color: var(--ab-text);
+        font-size: 1.8rem;
+        font-weight: 900;
+        line-height: 1;
+    }
+
+    .cta-card {
+        padding: 1.8rem;
+        background: linear-gradient(135deg, rgba(79,70,229,.96), rgba(14,165,233,.90));
+        color: #fff;
+        box-shadow: 0 30px 80px rgba(79,70,229,.18);
+    }
+
+    .cta-title {
+        font-size: clamp(1.8rem, 4vw, 2.8rem);
+        font-weight: 900;
+        line-height: 1.08;
+        margin-bottom: .8rem;
+        letter-spacing: -0.03em;
+    }
+
+    .cta-text {
+        color: rgba(255,255,255,.92);
+        line-height: 1.85;
+        margin-bottom: 1rem;
+        max-width: 760px;
+    }
+
+    .cta-actions {
+        display: flex;
+        gap: .9rem;
+        flex-wrap: wrap;
+    }
+
+    .cta-btn-light {
+        border: none;
+        border-radius: 18px;
+        padding: .95rem 1.3rem;
+        font-weight: 800;
+        background: #fff;
+        color: #312e81;
+    }
+
+    .cta-btn-outline {
+        border-radius: 18px;
+        padding: .95rem 1.25rem;
+        font-weight: 800;
+        border: 1px solid rgba(255,255,255,.24);
+        color: #fff;
+        background: rgba(255,255,255,.08);
+    }
+
+    @media (max-width: 1199px) {
+        .intro-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .feature-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 767px) {
+        .about-shell {
+            padding-top: 2rem;
+        }
+
+        .hero-card,
+        .section-card,
+        .cta-card {
+            padding: 1.2rem;
+        }
+
+        .feature-grid,
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .cta-actions {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container about-shell">
+    <div class="hero-card glass-card">
+        <div class="hero-inner">
+            <div class="hero-kicker">
+                <i class="bi bi-info-circle"></i>
+                <span>关于 GaitFix</span>
+            </div>
+            <h1 class="hero-title">一个围绕跑步视频建立的姿态分析平台</h1>
+            <p class="hero-desc">
+                GaitFix 致力于帮助用户通过跑步视频，更直观地理解自己的动作表现。系统会自动提取关键点、计算核心指标、输出问题诊断，并结合图表与骨架复核帮助用户更系统地查看跑姿问题与改进方向。
+            </p>
+        </div>
+    </div>
+
+    <div class="intro-grid">
+        <div class="glass-card section-card">
+            <div class="section-title">这个系统能做什么</div>
+            <p class="section-subtitle">
+                它不是简单的视频播放器，也不是只给一句结论的黑盒工具，而是一套面向跑步场景的分析系统：从上传视频，到生成报告，再到后续复盘，都围绕同一套分析逻辑展开。
+            </p>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="bi bi-speedometer2"></i></div>
+                    <div class="feature-title">核心跑步指标</div>
+                    <p class="feature-text">系统会计算步频、触地时间、腾空时间、垂直振幅、躯干前倾角和过度跨步指数等关键指标。</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="bi bi-bar-chart-line"></i></div>
+                    <div class="feature-title">动态变化趋势</div>
+                    <p class="feature-text">不仅输出摘要值，也会用波形图和散点图展示整段跑步中的变化过程。</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="bi bi-exclamation-diamond"></i></div>
+                    <div class="feature-title">问题诊断</div>
+                    <p class="feature-text">系统会结合步态过程中的多项证据，对本次跑姿中最值得关注的问题进行诊断。</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="bi bi-lightbulb"></i></div>
+                    <div class="feature-title">改进建议</div>
+                    <p class="feature-text">分析结果会被转成更容易理解的建议，帮助用户明确下一步优先优化什么。</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="bi bi-camera-video"></i></div>
+                    <div class="feature-title">原视频复核</div>
+                    <p class="feature-text">支持原视频与 2D 骨架叠加，帮助用户直接观察动作表现与分析结果之间的对应关系。</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon"><i class="bi bi-diagram-3"></i></div>
+                    <div class="feature-title">3D骨架复核</div>
+                    <p class="feature-text">通过 3D 骨架从不同角度观察动作结构，更方便确认问题出现的位置与动作细节。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-card section-card">
+            <div class="section-title">分析流程如何工作</div>
+            <p class="section-subtitle">
+                整个分析流程围绕“上传视频 → 关键点识别 → 指标计算 → 报告生成”展开，目标是让结果既有数据支撑，也尽量易于理解。
+            </p>
+
+            <ul class="method-list">
+                <li class="method-item">
+                    <div class="method-icon"><i class="bi bi-cloud-arrow-up"></i></div>
+                    <div>
+                        <div class="method-title">上传与片段截取</div>
+                        <p class="method-text">用户上传跑步视频后，可以选择真正需要分析的时间段，减少无关片段干扰。</p>
+                    </div>
+                </li>
+
+                <li class="method-item">
+                    <div class="method-icon"><i class="bi bi-person-bounding-box"></i></div>
+                    <div>
+                        <div class="method-title">关键点提取</div>
+                        <p class="method-text">系统从视频中提取身体关键点，构建后续用于动作分析的时序数据。</p>
+                    </div>
+                </li>
+
+                <li class="method-item">
+                    <div class="method-icon"><i class="bi bi-activity"></i></div>
+                    <div>
+                        <div class="method-title">指标与诊断生成</div>
+                        <p class="method-text">系统结合整段步态过程，生成核心指标、问题诊断、图表和动作复核内容。</p>
+                    </div>
+                </li>
+
+                <li class="method-item">
+                    <div class="method-icon"><i class="bi bi-journal-richtext"></i></div>
+                    <div>
+                        <div class="method-title">报告与复盘</div>
+                        <p class="method-text">用户可以查看结果报告，也可以通过历史记录持续复盘训练前后的变化趋势。</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="glass-card section-card">
+        <div class="section-title">平台特点</div>
+        <p class="section-subtitle">
+            GaitFix 的核心目标，是把“视频分析”“动作理解”和“用户可读的报告”真正连接起来，而不是只停留在技术展示层面。
+        </p>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">核心指标</div>
+                <div class="stat-value">{{ feature_count }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">主要结果模块</div>
+                <div class="stat-value">{{ report_modules }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">支持复核方式</div>
+                <div class="stat-value">2D / 3D</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">使用路径</div>
+                <div class="stat-value">上传 → 分析 → 复盘</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="cta-card glass-card">
+        <div class="cta-title">准备开始你的第一次跑步姿态分析了吗？</div>
+        <p class="cta-text">
+            上传一段跑步视频后，你将获得完整的分析报告、问题诊断、趋势图表以及动作复核视图。无论你是刚开始跑步，还是希望系统复盘训练动作，这个页面都会是一个清晰的起点。
+        </p>
+
+        <div class="cta-actions">
+            {% if user.is_authenticated %}
+                <a href="{% url 'analysis:upload' %}" class="btn cta-btn-light">
+                    <i class="bi bi-camera-video me-2"></i>开始分析
+                </a>
+                <a href="{% url 'main:dashboard' %}" class="btn cta-btn-outline">
+                    <i class="bi bi-grid-1x2 me-2"></i>进入分析中心
+                </a>
+            {% else %}
+                <a href="{% url 'users:register' %}" class="btn cta-btn-light">
+                    <i class="bi bi-person-plus me-2"></i>立即注册
+                </a>
+                <a href="{% url 'users:login' %}" class="btn cta-btn-outline">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>用户登录
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,563 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}GaitFix 跑步姿态分析系统{% endblock %}</title>
+
+    <meta name="description"
+          content="GaitFix 是一个基于视频的跑步姿态分析平台，支持跑步视频上传、关键点识别、核心指标分析、问题诊断、图表展示与动作复核。">
+    <meta name="theme-color" content="#4f46e5">
+
+    <link rel="icon" href="{% static 'images/logo.png' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --base-bg: #f5f7fc;
+            --base-surface: rgba(255, 255, 255, .84);
+            --base-surface-strong: rgba(255, 255, 255, .92);
+            --base-line: rgba(15, 23, 42, .08);
+            --base-text: #0f172a;
+            --base-muted: #64748b;
+            --base-brand: #4f46e5;
+            --base-brand-2: #0ea5e9;
+            --base-brand-3: #22c55e;
+            --base-shadow: 0 18px 45px rgba(15, 23, 42, .08);
+            --base-shadow-strong: 0 24px 60px rgba(79, 70, 229, .12);
+            --base-radius: 24px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: radial-gradient(circle at top left, rgba(79, 70, 229, .06), transparent 24%),
+            radial-gradient(circle at top right, rgba(14, 165, 233, .07), transparent 28%),
+            linear-gradient(180deg, #f8fbff 0%, #f4f6fb 100%);
+            color: var(--base-text);
+            display: flex;
+            flex-direction: column;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .site-shell {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar */
+        .site-navbar-wrap {
+            position: sticky;
+            top: 0;
+            z-index: 1040;
+            padding: .9rem 0;
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            background: linear-gradient(180deg, rgba(248, 251, 255, .78), rgba(248, 251, 255, .52));
+            border-bottom: 1px solid rgba(255, 255, 255, .55);
+        }
+
+        .site-navbar {
+            border-radius: 22px;
+            background: var(--base-surface);
+            border: 1px solid rgba(255, 255, 255, .72);
+            box-shadow: var(--base-shadow);
+            padding: .8rem 1rem;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        .navbar-brand {
+            display: inline-flex;
+            align-items: center;
+            gap: .8rem;
+            font-weight: 900;
+            color: var(--base-text) !important;
+            letter-spacing: -0.02em;
+        }
+
+        .brand-logo-wrap {
+            width: 44px;
+            height: 44px;
+            border-radius: 15px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            box-shadow: none;
+            overflow: hidden;
+        }
+
+        .brand-logo-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.05;
+        }
+
+        .brand-title {
+            font-size: 1rem;
+            font-weight: 900;
+        }
+
+        .brand-subtitle {
+            font-size: .72rem;
+            font-weight: 700;
+            color: var(--base-muted);
+            margin-top: .1rem;
+        }
+
+        .navbar-nav .nav-link {
+            color: #334155 !important;
+            font-weight: 700;
+            padding: .75rem 1rem !important;
+            border-radius: 14px;
+            transition: all .2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: .45rem;
+        }
+
+        .navbar-nav .nav-link:hover,
+        .navbar-nav .nav-link.active {
+            color: #312e81 !important;
+            background: rgba(79, 70, 229, .08);
+        }
+
+        .navbar-toggler {
+            border: none;
+            box-shadow: none !important;
+            border-radius: 14px;
+            padding: .6rem .8rem;
+            background: rgba(79, 70, 229, .06);
+        }
+
+        .navbar-actions {
+            display: flex;
+            align-items: center;
+            gap: .7rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-pill-btn {
+            min-height: 44px;
+            border-radius: 14px;
+            padding: 0 1rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: .45rem;
+            transition: all .2s ease;
+        }
+
+        .nav-primary-btn {
+            background: linear-gradient(135deg, #4f46e5, #0ea5e9);
+            color: #fff !important;
+            border: none;
+            box-shadow: var(--base-shadow-strong);
+        }
+
+        .nav-primary-btn:hover {
+            transform: translateY(-2px);
+            color: #fff !important;
+            box-shadow: 0 28px 65px rgba(79, 70, 229, .16);
+        }
+
+        .nav-outline-btn {
+            background: rgba(255, 255, 255, .75);
+            color: var(--base-text) !important;
+            border: 1px solid rgba(15, 23, 42, .08);
+        }
+
+        .nav-outline-btn:hover {
+            transform: translateY(-2px);
+            color: var(--base-text) !important;
+            background: rgba(255, 255, 255, .95);
+        }
+
+        .user-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: .55rem;
+            min-height: 44px;
+            padding: 0 .9rem;
+            border-radius: 14px;
+            background: rgba(79, 70, 229, .06);
+            color: #312e81;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .user-chip i {
+            color: var(--base-brand);
+        }
+
+        /* Main */
+        main {
+            flex: 1;
+        }
+
+        /* Messages */
+        .site-messages {
+            margin-top: 1rem;
+        }
+
+        .site-alert {
+            border: none;
+            border-radius: 18px;
+            box-shadow: var(--base-shadow);
+            padding: 1rem 1.1rem;
+        }
+
+        /* Footer */
+        .site-footer {
+            margin-top: 4rem;
+            padding: 0 0 1.4rem;
+        }
+
+        .footer-card {
+            border-radius: 28px;
+            background: var(--base-surface);
+            border: 1px solid rgba(255, 255, 255, .72);
+            box-shadow: var(--base-shadow);
+            padding: 1.6rem;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1.2fr .9fr .9fr;
+            gap: 1.5rem;
+            align-items: start;
+        }
+
+        .footer-brand {
+            display: flex;
+            align-items: flex-start;
+            gap: .9rem;
+        }
+
+        .footer-logo {
+            width: 52px;
+            height: 52px;
+            border-radius: 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .footer-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .footer-title {
+            font-size: 1.05rem;
+            font-weight: 900;
+            color: var(--base-text);
+            margin-bottom: .35rem;
+        }
+
+        .footer-text {
+            color: var(--base-muted);
+            line-height: 1.8;
+            margin: 0;
+        }
+
+        .footer-heading {
+            font-size: .95rem;
+            font-weight: 800;
+            color: var(--base-text);
+            margin-bottom: .8rem;
+        }
+
+        .footer-links {
+            display: grid;
+            gap: .6rem;
+        }
+
+        .footer-link {
+            color: #334155;
+            font-weight: 600;
+            transition: color .2s ease, transform .2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: .45rem;
+        }
+
+        .footer-link:hover {
+            color: #312e81;
+            transform: translateX(2px);
+        }
+
+        .footer-bottom {
+            margin-top: 1.25rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(15, 23, 42, .06);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+            color: var(--base-muted);
+            font-size: .92rem;
+        }
+
+        .footer-badges {
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-badge {
+            border-radius: 999px;
+            padding: .38rem .75rem;
+            background: rgba(79, 70, 229, .06);
+            color: #4338ca;
+            font-weight: 700;
+            font-size: .78rem;
+        }
+
+        /* Utility */
+        .page-transition {
+            animation: fadeUp .45s ease;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 1199px) {
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 991px) {
+            .navbar-actions {
+                margin-top: .8rem;
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .site-navbar {
+                padding: .8rem;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .site-navbar-wrap {
+                padding: .65rem 0;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-card {
+                padding: 1.2rem;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+<div class="site-shell">
+    <div class="site-navbar-wrap">
+        <div class="container">
+            <nav class="navbar navbar-expand-lg site-navbar">
+                <a class="navbar-brand" href="{% url 'main:home' %}">
+                    <span class="brand-logo-wrap">
+                        <img src="{% static 'images/logo.png' %}" alt="GaitFix Logo">
+                    </span>
+                    <span class="brand-text">
+                        <span class="brand-title">GaitFix</span>
+                        <span class="brand-subtitle">跑步姿态分析平台</span>
+                    </span>
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarMain">
+                    <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'main:home' %}">
+                                <i class="bi bi-house-door"></i><span>首页</span>
+                            </a>
+                        </li>
+
+                        {% if user.is_authenticated %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'analysis:upload' %}">
+                                    <i class="bi bi-camera-video"></i><span>上传分析</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'history:list' %}">
+                                    <i class="bi bi-clock-history"></i><span>历史记录</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'main:dashboard' %}">
+                                    <i class="bi bi-grid-1x2"></i><span>分析中心</span>
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'main:about' %}">
+                                <i class="bi bi-info-circle"></i><span>关于</span>
+                            </a>
+                        </li>
+                    </ul>
+
+                    <div class="navbar-actions">
+                        {% if user.is_authenticated %}
+                            <span class="user-chip">
+                                <i class="bi bi-person-circle"></i>
+                                <span>{{ user.username }}</span>
+                            </span>
+                            <a href="{% url 'users:profile' %}" class="nav-pill-btn nav-outline-btn">
+                                <i class="bi bi-person"></i><span>个人资料</span>
+                            </a>
+                            <a href="{% url 'users:logout' %}" class="nav-pill-btn nav-outline-btn">
+                                <i class="bi bi-box-arrow-right"></i><span>退出</span>
+                            </a>
+                        {% else %}
+                            <a href="{% url 'users:login' %}" class="nav-pill-btn nav-outline-btn">
+                                <i class="bi bi-box-arrow-in-right"></i><span>登录</span>
+                            </a>
+                            <a href="{% url 'users:register' %}" class="nav-pill-btn nav-primary-btn">
+                                <i class="bi bi-person-plus"></i><span>注册</span>
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </nav>
+
+            {% if messages %}
+                <div class="site-messages">
+                    {% for message in messages %}
+                        <div class="alert site-alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show"
+                             role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <main class="page-transition">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-card">
+                <div class="footer-grid">
+                    <div>
+                        <div class="footer-brand">
+                            <div class="footer-logo">
+                                <img src="{% static 'images/logo.png' %}" alt="GaitFix Logo">
+                            </div>
+                            <div>
+                                <div class="footer-title">GaitFix 跑步姿态分析平台</div>
+                                <p class="footer-text">
+                                    基于视频的跑步姿态分析系统，支持关键点识别、核心指标计算、问题诊断、趋势图表展示以及动作复核。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="footer-heading">快速入口</div>
+                        <div class="footer-links">
+                            <a class="footer-link" href="{% url 'main:home' %}">
+                                <i class="bi bi-house-door"></i><span>首页</span>
+                            </a>
+                            {% if user.is_authenticated %}
+                                <a class="footer-link" href="{% url 'analysis:upload' %}">
+                                    <i class="bi bi-camera-video"></i><span>上传分析</span>
+                                </a>
+                                <a class="footer-link" href="{% url 'history:list' %}">
+                                    <i class="bi bi-clock-history"></i><span>历史记录</span>
+                                </a>
+                                <a class="footer-link" href="{% url 'main:dashboard' %}">
+                                    <i class="bi bi-grid-1x2"></i><span>分析中心</span>
+                                </a>
+                            {% endif %}
+                            <a class="footer-link" href="{% url 'main:about' %}">
+                                <i class="bi bi-info-circle"></i><span>关于</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="footer-heading">说明</div>
+                        <div class="footer-links">
+                            <span class="footer-text">
+                                本系统旨在帮助用户更系统地理解跑步动作表现，分析结果适合用于训练复盘与姿态观察，不替代专业医疗或实验室评估。
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer-bottom">
+                    <div>© {% now "Y" %} GaitFix · 跑步姿态分析平台</div>
+                    <div class="footer-badges">
+                        <span class="footer-badge">视频分析</span>
+                        <span class="footer-badge">动作诊断</span>
+                        <span class="footer-badge">趋势图表</span>
+                        <span class="footer-badge">2D / 3D 复核</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

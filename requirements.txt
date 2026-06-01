@@ -1,0 +1,10 @@
+Django>=5.2,<5.3
+Pillow>=9.0
+django-crispy-forms>=1.14
+crispy-bootstrap5>=0.7
+opencv-python>=4.5
+matplotlib>=3.5
+numpy>=1.21
+celery>=5.3
+redis>=5.0
+python-dotenv>=1.0

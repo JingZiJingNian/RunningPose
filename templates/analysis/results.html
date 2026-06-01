@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}跑步姿态分析报告 - {{ video_upload.title }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/analysis/results.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container results-shell">
+    {% if video_upload.status == 'failed' %}
+        {% include 'analysis/partials/_results_failed.html' %}
+    {% elif video_upload.status != 'completed' or not analysis_result %}
+        {% include 'analysis/partials/_results_pending.html' %}
+    {% else %}
+        {% include 'analysis/partials/_results_hero.html' %}
+        {% include 'analysis/partials/_results_summary.html' %}
+        {% include 'analysis/partials/_results_metrics.html' %}
+        {% include 'analysis/partials/_results_insights.html' %}
+        {% include 'analysis/partials/_results_charts.html' %}
+        {% include 'analysis/partials/_results_workspace.html' %}
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% if video_upload.status == 'completed' and analysis_result %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/mrdoob/three.js@r128/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+{{ pose_data_json|json_script:"pose-data-json" }}
+{{ analysis_result.overall_metrics|json_script:"overall-metrics-json" }}
+{{ analysis_result.issues|json_script:"issues-json" }}
+
+<script>
+    const analysisData = {
+        poseData: JSON.parse(document.getElementById('pose-data-json').textContent),
+        overallMetrics: JSON.parse(document.getElementById('overall-metrics-json').textContent),
+        issues: JSON.parse(document.getElementById('issues-json').textContent),
+        videoInfo: {
+            duration: {{ video_upload.duration|default_if_none:0 }},
+            fps: {{ video_upload.fps|default_if_none:30 }},
+            startTime: {{ video_upload.start_time|default_if_none:0 }},
+            endTime: {{ video_upload.end_time|default_if_none:0 }}
+        }
+    };
+</script>
+
+<script src="{% static 'js/analysis/results-core.js' %}"></script>
+<script src="{% static 'js/analysis/results-metrics.js' %}"></script>
+<script src="{% static 'js/analysis/results-charts.js' %}"></script>
+<script src="{% static 'js/analysis/results-video.js' %}"></script>
+<script src="{% static 'js/analysis/results-skeleton.js' %}"></script>
+{% endif %}
+{% endblock %}

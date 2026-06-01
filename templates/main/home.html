@@ -1,0 +1,1688 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}首页 - GaitFix 跑步姿态分析系统{% endblock %}
+
+{% block extra_css %}
+    <style>
+        :root {
+            --bg: #f5f7fb;
+            --card-bg: rgba(255, 255, 255, 0.88);
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --brand: #4f46e5;
+            --brand-2: #0ea5e9;
+            --brand-3: #22c55e;
+            --line: rgba(15, 23, 42, 0.08);
+            --shadow-soft: 0 20px 50px rgba(15, 23, 42, 0.10);
+            --shadow-strong: 0 30px 80px rgba(79, 70, 229, 0.22);
+            --radius-xl: 28px;
+            --radius-lg: 22px;
+        }
+
+
+        body {
+            background: radial-gradient(circle at top left, rgba(79, 70, 229, 0.08), transparent 24%),
+            radial-gradient(circle at top right, rgba(14, 165, 233, 0.08), transparent 28%),
+            linear-gradient(180deg, #f8fbff 0%, #f4f6fb 100%);
+            color: var(--text-main);
+        }
+
+        .home-shell {
+            overflow: hidden;
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.55);
+            box-shadow: var(--shadow-soft);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-radius: var(--radius-xl);
+        }
+
+        .section-block {
+            padding: 5.5rem 0;
+            position: relative;
+        }
+
+        .section-heading {
+            max-width: 760px;
+            margin: 0 auto 2.5rem;
+            text-align: center;
+        }
+
+        .section-kicker {
+            display: inline-flex;
+            align-items: center;
+            gap: .45rem;
+            border-radius: 999px;
+            padding: .45rem .85rem;
+            background: rgba(79, 70, 229, 0.08);
+            color: #4338ca;
+            font-weight: 700;
+            font-size: .9rem;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            line-height: 1.08;
+            font-weight: 800;
+            margin-bottom: .85rem;
+            letter-spacing: -0.02em;
+        }
+
+        .section-subtitle {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            line-height: 1.8;
+            margin: 0;
+        }
+
+        /* Hero */
+        .hero-section {
+            position: relative;
+            min-height: calc(100vh - 72px);
+            display: flex;
+            align-items: center;
+            padding: 5rem 0 4rem;
+            overflow: hidden;
+        }
+
+        .hero-gradient {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 18% 22%, rgba(79, 70, 229, 0.20), transparent 24%),
+            radial-gradient(circle at 82% 18%, rgba(14, 165, 233, 0.18), transparent 22%),
+            radial-gradient(circle at 55% 78%, rgba(34, 197, 94, 0.10), transparent 18%);
+            pointer-events: none;
+        }
+
+        .hero-grid {
+            position: relative;
+            z-index: 2;
+            display: grid;
+            grid-template-columns: 1.05fr 0.95fr;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .hero-copy {
+            position: relative;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: .55rem;
+            border-radius: 999px;
+            padding: .55rem .95rem;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            box-shadow: 0 8px 24px rgba(79, 70, 229, 0.10);
+            color: #3730a3;
+            font-weight: 700;
+            margin-bottom: 1.2rem;
+        }
+
+        .hero-title {
+            font-size: clamp(2.8rem, 5vw, 5rem);
+            line-height: 0.98;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            letter-spacing: -0.04em;
+        }
+
+        .hero-title .gradient-text {
+            background: linear-gradient(135deg, #4f46e5, #0ea5e9);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .hero-desc {
+            font-size: 1.1rem;
+            color: #111827;
+            line-height: 1.9;
+            max-width: 680px;
+            margin-bottom: 1.6rem;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.6rem;
+        }
+
+        .btn-hero-primary {
+            border: none;
+            border-radius: 18px;
+            padding: 1rem 1.4rem;
+            color: #fff;
+            font-weight: 700;
+            background: linear-gradient(135deg, #4f46e5, #0ea5e9);
+            box-shadow: var(--shadow-strong);
+            transition: transform .22s ease, box-shadow .22s ease;
+        }
+
+        .btn-hero-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 36px 90px rgba(79, 70, 229, 0.28);
+            color: #fff;
+        }
+
+        .btn-hero-secondary {
+            border-radius: 18px;
+            padding: 1rem 1.35rem;
+            font-weight: 700;
+            background: rgba(255, 255, 255, 0.72);
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            color: var(--text-main);
+            transition: transform .22s ease, background .22s ease;
+        }
+
+        .btn-hero-secondary:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.92);
+            color: var(--text-main);
+        }
+
+        .hero-points {
+            display: grid;
+            gap: .7rem;
+            margin-top: .25rem;
+        }
+
+        .hero-point {
+            display: inline-flex;
+            align-items: center;
+            gap: .7rem;
+            color: #334155;
+            font-weight: 500;
+        }
+
+        .hero-point i {
+            color: #4f46e5;
+        }
+
+        .hero-visual {
+            position: relative;
+            min-height: 620px;
+        }
+
+        .hero-device {
+            position: relative;
+            z-index: 3;
+            border-radius: 30px;
+            padding: 1rem;
+            background: rgba(10, 15, 31, 0.88);
+            box-shadow: 0 40px 100px rgba(15, 23, 42, 0.28);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transform: perspective(1400px) rotateY(-10deg) rotateX(5deg);
+            transform-origin: center;
+        }
+
+        .device-bar {
+            display: flex;
+            align-items: center;
+            gap: .45rem;
+            padding: .25rem .25rem .75rem;
+        }
+
+        .device-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .device-dot:nth-child(1) {
+            background: #ef4444;
+        }
+
+        .device-dot:nth-child(2) {
+            background: #f59e0b;
+        }
+
+        .device-dot:nth-child(3) {
+            background: #10b981;
+        }
+
+        .device-screen {
+            border-radius: 24px;
+            overflow: hidden;
+            position: relative;
+            min-height: 540px;
+            background: linear-gradient(180deg, rgba(17, 24, 39, 0.98), rgba(2, 6, 23, 1));
+        }
+
+        .device-screen::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 70% 20%, rgba(59, 130, 246, 0.18), transparent 25%),
+            radial-gradient(circle at 25% 75%, rgba(99, 102, 241, 0.18), transparent 22%);
+            pointer-events: none;
+        }
+
+        .runner-preview {
+            position: absolute;
+            inset: 0;
+            background: url('{% static "images/hero-bg.jpg" %}') center/cover no-repeat;
+            opacity: 0.35;
+            filter: saturate(1.05) contrast(1.02);
+        }
+
+        .screen-content {
+            position: relative;
+            z-index: 2;
+            padding: 1.2rem;
+            height: 100%;
+            display: grid;
+            grid-template-rows: auto auto 1fr;
+            gap: 1rem;
+        }
+
+        .screen-topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: .75rem;
+            color: #e5e7eb;
+            font-size: .95rem;
+            font-weight: 600;
+        }
+
+        .screen-badge {
+            border-radius: 999px;
+            padding: .45rem .7rem;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            font-size: .82rem;
+            color: #cbd5e1;
+        }
+
+        .screen-hero {
+            display: grid;
+            grid-template-columns: 1.05fr 0.95fr;
+            gap: 1rem;
+        }
+
+        .mock-video {
+            height: 240px;
+            border-radius: 22px;
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.1), rgba(2, 6, 23, 0.08)),
+            url('{% static "images/run.png" %}') center/cover no-repeat;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mock-video::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.10), rgba(14, 165, 233, 0.10));
+        }
+
+
+        .metric-stack {
+            display: grid;
+            gap: .75rem;
+        }
+
+        .metric-mini {
+            border-radius: 18px;
+            padding: .95rem 1rem;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #f8fafc;
+        }
+
+        .metric-mini-label {
+            font-size: .8rem;
+            color: #cbd5e1;
+            margin-bottom: .35rem;
+        }
+
+        .metric-mini-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .screen-bottom {
+            display: grid;
+            grid-template-columns: 1.1fr .9fr;
+            gap: 1rem;
+        }
+
+        .mock-chart,
+        .mock-diagnosis {
+            border-radius: 22px;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #e2e8f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mock-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: .8rem;
+            font-size: .92rem;
+            font-weight: 700;
+        }
+
+        .wave-svg {
+            width: 100%;
+            height: 160px;
+            display: block;
+        }
+
+        .wave-path {
+            fill: rgba(79, 70, 229, 0.18);
+            stroke: #8b5cf6;
+            stroke-width: 3;
+            filter: drop-shadow(0 0 10px rgba(139, 92, 246, .20));
+        }
+
+        .diag-card {
+            border-radius: 16px;
+            padding: .85rem .9rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            margin-bottom: .7rem;
+        }
+
+        .diag-top {
+            display: flex;
+            justify-content: space-between;
+            gap: .6rem;
+            margin-bottom: .45rem;
+        }
+
+        .diag-title {
+            font-size: .92rem;
+            font-weight: 700;
+        }
+
+        .diag-tag {
+            border-radius: 999px;
+            padding: .2rem .55rem;
+            font-size: .72rem;
+            font-weight: 700;
+            background: rgba(239, 68, 68, .18);
+            color: #fecaca;
+        }
+
+        .diag-text {
+            font-size: .82rem;
+            color: #cbd5e1;
+            line-height: 1.65;
+            margin: 0;
+        }
+
+        .float-card {
+            position: absolute;
+            border-radius: 22px;
+            background: rgba(255, 255, 255, 0.78);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: var(--shadow-soft);
+            backdrop-filter: blur(16px);
+            padding: 1rem 1.05rem;
+            z-index: 4;
+            animation: floatY 5.5s ease-in-out infinite;
+        }
+
+        .float-card.one {
+            top: 3%;
+            right: -4%;
+            width: 210px;
+            animation-delay: -1s;
+        }
+
+        .float-card.two {
+            bottom: 7%;
+            left: -7%;
+            width: 230px;
+            animation-delay: -2.2s;
+        }
+
+        .float-card.three {
+            top: 52%;
+            right: -10%;
+            width: 180px;
+            animation-delay: -3.1s;
+        }
+
+        .float-title {
+            font-size: .86rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: .4rem;
+        }
+
+        .float-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #111827;
+            line-height: 1;
+        }
+
+        .float-sub {
+            font-size: .8rem;
+            color: #64748b;
+            margin-top: .35rem;
+        }
+
+        .soft-orb {
+            position: absolute;
+            border-radius: 999px;
+            filter: blur(18px);
+            z-index: 1;
+            opacity: .45;
+        }
+
+        .soft-orb.one {
+            width: 160px;
+            height: 160px;
+            right: 8%;
+            top: 0;
+            background: rgba(79, 70, 229, 0.35);
+        }
+
+        .soft-orb.two {
+            width: 120px;
+            height: 120px;
+            left: -2%;
+            bottom: 12%;
+            background: rgba(14, 165, 233, 0.28);
+        }
+
+        /* Steps */
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+        }
+
+        .step-card {
+            position: relative;
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            background: linear-gradient(180deg, rgba(255, 255, 255, .95), rgba(255, 255, 255, .82));
+            border: 1px solid var(--line);
+            box-shadow: var(--shadow-soft);
+            transition: transform .22s ease, box-shadow .22s ease;
+        }
+
+        .step-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 24px 50px rgba(15, 23, 42, 0.12);
+        }
+
+        .step-index {
+            width: 52px;
+            height: 52px;
+            border-radius: 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: #fff;
+            background: linear-gradient(135deg, #4f46e5, #0ea5e9);
+            box-shadow: 0 18px 32px rgba(79, 70, 229, .22);
+            margin-bottom: 1rem;
+        }
+
+        .step-title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            margin-bottom: .6rem;
+        }
+
+        .step-text {
+            color: var(--text-muted);
+            line-height: 1.8;
+            margin: 0;
+        }
+
+        /* Capability cards */
+        .cap-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.2rem;
+        }
+
+        .cap-card {
+            padding: 1.4rem;
+            border-radius: 24px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, .95), rgba(255, 255, 255, .86));
+            border: 1px solid var(--line);
+            box-shadow: var(--shadow-soft);
+            height: 100%;
+            transition: transform .22s ease, box-shadow .22s ease;
+        }
+
+        .cap-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 24px 50px rgba(15, 23, 42, 0.12);
+        }
+
+        .cap-icon {
+            width: 58px;
+            height: 58px;
+            border-radius: 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(79, 70, 229, .16), rgba(14, 165, 233, .18));
+            color: #4338ca;
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+        }
+
+        .cap-title {
+            font-size: 1.08rem;
+            font-weight: 800;
+            margin-bottom: .55rem;
+        }
+
+        .cap-text {
+            color: var(--text-muted);
+            line-height: 1.75;
+            margin: 0;
+        }
+
+        /* Report preview */
+        .report-preview {
+            padding: 1.25rem;
+            position: relative;
+        }
+
+        .report-shell {
+            border-radius: 30px;
+            padding: 1rem;
+            background: rgba(255, 255, 255, .66);
+            border: 1px solid rgba(255, 255, 255, .85);
+            box-shadow: 0 25px 70px rgba(15, 23, 42, 0.12);
+        }
+
+        .report-grid {
+            display: grid;
+            grid-template-columns: 1.05fr 0.95fr;
+            gap: 1rem;
+        }
+
+        .preview-panel {
+            border-radius: 22px;
+            background: linear-gradient(180deg, #ffffff, #f8fbff);
+            border: 1px solid rgba(15, 23, 42, .06);
+            box-shadow: 0 10px 24px rgba(15, 23, 42, .06);
+            padding: 1rem;
+        }
+
+        .preview-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: .75rem;
+            font-size: .95rem;
+            font-weight: 800;
+            margin-bottom: .9rem;
+        }
+
+        .pill-mini {
+            border-radius: 999px;
+            padding: .3rem .65rem;
+            font-size: .75rem;
+            font-weight: 700;
+            background: rgba(79, 70, 229, .08);
+            color: #4338ca;
+        }
+
+        .preview-metric-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: .8rem;
+        }
+
+        .preview-metric {
+            border-radius: 18px;
+            padding: .95rem;
+            background: linear-gradient(180deg, #ffffff, #f8fafc);
+            border: 1px solid rgba(15, 23, 42, .05);
+        }
+
+        .preview-metric-label {
+            color: #64748b;
+            font-size: .8rem;
+            margin-bottom: .4rem;
+        }
+
+        .preview-metric-value {
+            font-size: 1.35rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .preview-diagnosis {
+            display: grid;
+            gap: .75rem;
+        }
+
+        .preview-diagnosis-card {
+            border-radius: 18px;
+            padding: .95rem 1rem;
+            border: 1px solid rgba(15, 23, 42, .06);
+            background: linear-gradient(180deg, #ffffff, #fbfcff);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .preview-diagnosis-card::before {
+            content: "";
+            position: absolute;
+            inset: 14px auto 14px 0;
+            width: 4px;
+            border-radius: 999px;
+            background: linear-gradient(180deg, #ef4444, #f59e0b);
+        }
+
+        .preview-diagnosis-title {
+            font-weight: 800;
+            margin-bottom: .35rem;
+        }
+
+        .preview-diagnosis-text {
+            color: var(--text-muted);
+            line-height: 1.7;
+            font-size: .92rem;
+            margin: 0;
+        }
+
+        /* Value section */
+        .value-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.2rem;
+        }
+
+        .value-card {
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            background: linear-gradient(180deg, rgba(255, 255, 255, .94), rgba(255, 255, 255, .84));
+            border: 1px solid var(--line);
+            box-shadow: var(--shadow-soft);
+            height: 100%;
+        }
+
+        .value-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: .9rem;
+        }
+
+        .value-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: #4f46e5;
+            background: linear-gradient(135deg, rgba(79, 70, 229, .12), rgba(14, 165, 233, .15));
+        }
+
+        .value-title {
+            font-size: 1.08rem;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .value-text {
+            color: var(--text-muted);
+            line-height: 1.75;
+            margin: 0;
+        }
+
+        /* Audience */
+        .audience-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.2rem;
+        }
+
+        .audience-card {
+            padding: 1.4rem;
+            border-radius: 24px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, .95), rgba(255, 255, 255, .86));
+            border: 1px solid var(--line);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .audience-card h5 {
+            font-weight: 800;
+            margin-bottom: .55rem;
+        }
+
+        .audience-card p {
+            color: var(--text-muted);
+            line-height: 1.75;
+            margin: 0;
+        }
+
+        /* CTA */
+        .cta-section {
+            padding: 5rem 0 6rem;
+        }
+
+        .cta-card {
+            position: relative;
+            overflow: hidden;
+            padding: 2.5rem;
+            border-radius: 32px;
+            background: linear-gradient(135deg, rgba(79, 70, 229, .98), rgba(14, 165, 233, .92));
+            color: #fff;
+            box-shadow: var(--shadow-strong);
+        }
+
+        .cta-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 20% 25%, rgba(255, 255, 255, .16), transparent 22%),
+            radial-gradient(circle at 82% 35%, rgba(255, 255, 255, .12), transparent 20%);
+            pointer-events: none;
+        }
+
+        .cta-inner {
+            position: relative;
+            z-index: 2;
+            display: grid;
+            grid-template-columns: 1.1fr .9fr;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .cta-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 900;
+            line-height: 1.05;
+            margin-bottom: .8rem;
+            letter-spacing: -0.03em;
+        }
+
+        .cta-text {
+            color: rgba(255, 255, 255, .9);
+            line-height: 1.8;
+            max-width: 700px;
+            margin: 0;
+        }
+
+        .cta-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: .9rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-cta-light {
+            border-radius: 18px;
+            padding: 1rem 1.35rem;
+            background: #fff;
+            color: #312e81;
+            font-weight: 800;
+            border: none;
+        }
+
+        .btn-cta-light:hover {
+            color: #312e81;
+            transform: translateY(-2px);
+        }
+
+        .btn-cta-outline {
+            border-radius: 18px;
+            padding: 1rem 1.35rem;
+            background: rgba(255, 255, 255, .08);
+            color: #fff;
+            font-weight: 800;
+            border: 1px solid rgba(255, 255, 255, .28);
+        }
+
+        .btn-cta-outline:hover {
+            color: #fff;
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, .13);
+        }
+
+        /* Articles */
+        .article-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.2rem;
+        }
+
+        .article-card {
+            overflow: hidden;
+            border-radius: 24px;
+            border: 1px solid var(--line);
+            background: linear-gradient(180deg, rgba(255, 255, 255, .95), rgba(255, 255, 255, .86));
+            box-shadow: var(--shadow-soft);
+            transition: transform .22s ease, box-shadow .22s ease;
+            height: 100%;
+        }
+
+        .article-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 24px 50px rgba(15, 23, 42, 0.12);
+        }
+
+        .article-media {
+            position: relative;
+            height: 220px;
+            overflow: hidden;
+        }
+
+        .article-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scale(1.02);
+            transition: transform .35s ease;
+        }
+
+        .article-card:hover .article-media img {
+            transform: scale(1.06);
+        }
+
+        .article-body {
+            padding: 1.25rem;
+        }
+
+        .article-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: .35rem;
+            border-radius: 999px;
+            padding: .35rem .65rem;
+            background: rgba(79, 70, 229, .08);
+            color: #4338ca;
+            font-size: .78rem;
+            font-weight: 700;
+            margin-bottom: .75rem;
+        }
+
+        .article-title {
+            font-size: 1.12rem;
+            font-weight: 800;
+            line-height: 1.35;
+            margin-bottom: .65rem;
+        }
+
+        .article-text {
+            color: var(--text-muted);
+            line-height: 1.75;
+            margin-bottom: 1rem;
+        }
+
+        .article-link {
+            font-weight: 700;
+            color: #4338ca;
+            text-decoration: none;
+        }
+
+        .article-link:hover {
+            color: #312e81;
+        }
+
+        /* Reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity .75s ease, transform .75s ease;
+        }
+
+        .reveal.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .grid-delay-1 {
+            transition-delay: .06s;
+        }
+
+        .grid-delay-2 {
+            transition-delay: .12s;
+        }
+
+        .grid-delay-3 {
+            transition-delay: .18s;
+        }
+
+        @keyframes floatY {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @media (max-width: 1399px) {
+            .cap-grid,
+            .value-grid,
+            .article-grid,
+            .audience-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 1199px) {
+            .hero-grid,
+            .report-grid,
+            .cta-inner {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-visual {
+                min-height: auto;
+            }
+
+            .hero-device {
+                transform: none;
+                max-width: 760px;
+                margin: 0 auto;
+            }
+
+            .cta-actions {
+                justify-content: flex-start;
+            }
+
+            .screen-hero,
+            .screen-bottom {
+                grid-template-columns: 1fr;
+            }
+
+            .float-card.one,
+            .float-card.two,
+            .float-card.three {
+                display: none;
+            }
+        }
+
+        @media (max-width: 991px) {
+            .steps-grid,
+            .cap-grid,
+            .value-grid,
+            .article-grid,
+            .audience-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .preview-metric-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .hero-section {
+                min-height: auto;
+                padding-top: 4.5rem;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .hero-title {
+                font-size: 2.8rem;
+            }
+
+            .section-block {
+                padding: 4rem 0;
+            }
+
+            .preview-metric-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-card {
+                padding: 2rem 1.35rem;
+            }
+
+            .hero-actions,
+            .cta-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="home-shell">
+        <!-- Hero -->
+        <section class="hero-section">
+            <div class="hero-gradient"></div>
+            <div class="container">
+                <div class="hero-grid">
+                    <div class="hero-copy reveal">
+                        <div class="hero-badge">
+                            <i class="bi bi-stars"></i>
+                            <span>视频驱动的跑步姿态分析</span>
+                        </div>
+
+                        <h1 class="hero-title">
+                            用视频看懂你的<br>
+                            <span class="gradient-text">跑步姿态</span>
+                        </h1>
+
+                        <p class="hero-desc">
+                            上传跑步视频，系统自动识别关键动作，分析步频、触地时间、垂直振幅、躯干前倾和落脚方式，并生成清晰易懂的跑姿报告与改进建议。
+                        </p>
+
+                        <div class="hero-actions">
+                            {% if user.is_authenticated %}
+                                <a href="{% url 'analysis:upload' %}" class="btn btn-hero-primary">
+                                    <i class="bi bi-camera-video me-2"></i>立即开始分析
+                                </a>
+                            {% else %}
+                                <a href="{% url 'users:register' %}" class="btn btn-hero-primary">
+                                    <i class="bi bi-person-plus me-2"></i>免费开始使用
+                                </a>
+                            {% endif %}
+                            <a href="#report-preview" class="btn btn-hero-secondary">
+                                <i class="bi bi-bar-chart-line me-2"></i>查看结果预览
+                            </a>
+                        </div>
+
+                        <div class="hero-points">
+                            <div class="hero-point">
+                                <i class="bi bi-check-circle-fill"></i>
+                                <span>自动提取跑步动作关键点并生成完整分析报告</span>
+                            </div>
+                            <div class="hero-point">
+                                <i class="bi bi-check-circle-fill"></i>
+                                <span>支持核心指标、问题诊断、趋势图表和动作复核</span>
+                            </div>
+                            <div class="hero-point">
+                                <i class="bi bi-check-circle-fill"></i>
+                                <span>适合跑步初学者、训练者和项目展示场景</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="hero-visual reveal grid-delay-1">
+                        <div class="soft-orb one"></div>
+                        <div class="soft-orb two"></div>
+
+                        <div class="hero-device">
+                            <div class="device-bar">
+                                <span class="device-dot"></span>
+                                <span class="device-dot"></span>
+                                <span class="device-dot"></span>
+                            </div>
+
+                            <div class="device-screen">
+                                <div class="runner-preview"></div>
+
+                                <div class="screen-content">
+                                    <div class="screen-topbar">
+                                        <span>分析报告预览</span>
+                                        <span class="screen-badge">已完成</span>
+                                    </div>
+
+                                    <div class="screen-hero">
+                                        <div class="mock-video">
+
+                                        </div>
+
+                                        <div class="metric-stack">
+                                            <div class="metric-mini">
+                                                <div class="metric-mini-label">步频</div>
+                                                <div class="metric-mini-value">172<span
+                                                        style="font-size:.78rem;font-weight:700;margin-left:.25rem;">spm</span>
+                                                </div>
+                                            </div>
+                                            <div class="metric-mini">
+                                                <div class="metric-mini-label">触地时间</div>
+                                                <div class="metric-mini-value">246<span
+                                                        style="font-size:.78rem;font-weight:700;margin-left:.25rem;">ms</span>
+                                                </div>
+                                            </div>
+                                            <div class="metric-mini">
+                                                <div class="metric-mini-label">躯干前倾角</div>
+                                                <div class="metric-mini-value">11.8<span
+                                                        style="font-size:.78rem;font-weight:700;margin-left:.25rem;">°</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="screen-bottom">
+                                        <div class="mock-chart">
+                                            <div class="mock-title">
+                                                <span>动态变化趋势</span>
+                                                <span class="screen-badge">趋势图</span>
+                                            </div>
+                                            <svg class="wave-svg" viewBox="0 0 400 160" preserveAspectRatio="none">
+                                                <path class="wave-path"
+                                                      d="M0,110 C30,96 55,58 85,72 C110,82 135,126 165,112 C200,96 220,46 250,58 C282,72 302,130 332,118 C356,110 378,74 400,82 L400,160 L0,160 Z"></path>
+                                            </svg>
+                                        </div>
+
+                                        <div class="mock-diagnosis">
+                                            <div class="mock-title">
+                                                <span>主要问题诊断</span>
+                                                <span class="screen-badge">3 项</span>
+                                            </div>
+
+                                            <div class="diag-card">
+                                                <div class="diag-top">
+                                                    <div class="diag-title">步频偏低</div>
+                                                    <span class="diag-tag">高优先级</span>
+                                                </div>
+                                                <p class="diag-text">
+                                                    当前整体步频偏低，建议优先通过更轻快的节奏来改善落脚与支撑表现。</p>
+                                            </div>
+
+                                            <div class="diag-card">
+                                                <div class="diag-top">
+                                                    <div class="diag-title">左右侧不对称</div>
+                                                    <span class="diag-tag"
+                                                          style="background:rgba(245,158,11,.18);color:#fde68a;">建议关注</span>
+                                                </div>
+                                                <p class="diag-text">
+                                                    左右脚支撑表现存在差异，建议结合视频与骨架进一步复核。</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="float-card one">
+                            <div class="float-title">问题诊断</div>
+                            <div class="float-value">3 项</div>
+                            <div class="float-sub">自动输出主要问题与改进建议</div>
+                        </div>
+
+                        <div class="float-card two">
+                            <div class="float-title">动作复核</div>
+                            <div class="float-value">2D / 3D</div>
+                            <div class="float-sub">支持原视频、骨架叠加与 3D 骨架复核</div>
+                        </div>
+
+                        <div class="float-card three">
+                            <div class="float-title">关键指标</div>
+                            <div class="float-value">6 项</div>
+                            <div class="float-sub">节奏、支撑、姿态与落脚方式一目了然</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Steps -->
+        <section class="section-block">
+            <div class="container">
+                <div class="section-heading reveal">
+                    <div class="section-kicker">
+                        <i class="bi bi-layers"></i>
+                        <span>使用流程</span>
+                    </div>
+                    <h2 class="section-title">三步完成跑步姿态分析</h2>
+                    <p class="section-subtitle">
+                        从上传视频到查看完整分析报告，只需要一个清晰的跑步片段，就能快速获得系统化的跑姿反馈。
+                    </p>
+                </div>
+
+                <div class="steps-grid">
+                    <div class="step-card reveal">
+                        <div class="step-index">01</div>
+                        <div class="step-title">上传跑步视频</div>
+                        <p class="step-text">
+                            上传一段清晰的跑步视频，并选择有效分析片段。系统会围绕真实跑步区间进行后续识别与分析。
+                        </p>
+                    </div>
+
+                    <div class="step-card reveal grid-delay-1">
+                        <div class="step-index">02</div>
+                        <div class="step-title">自动识别动作与计算指标</div>
+                        <p class="step-text">
+                            系统提取身体关键点，分析步频、触地时间、垂直振幅、躯干前倾角和落脚方式等核心指标。
+                        </p>
+                    </div>
+
+                    <div class="step-card reveal grid-delay-2">
+                        <div class="step-index">03</div>
+                        <div class="step-title">查看完整分析报告</div>
+                        <p class="step-text">
+                            获得核心指标、问题诊断、动态趋势图表和动作复核视图，帮助你更清楚地理解本次跑步表现。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Capabilities -->
+        <section class="section-block pt-0">
+            <div class="container">
+                <div class="section-heading reveal">
+                    <div class="section-kicker">
+                        <i class="bi bi-stars"></i>
+                        <span>核心能力</span>
+                    </div>
+                    <h2 class="section-title">你将获得哪些分析结果</h2>
+                    <p class="section-subtitle">
+                        这不是单纯的视频回放，而是一套围绕跑步节奏、支撑表现、身体姿态和落脚方式建立的综合分析结果。
+                    </p>
+                </div>
+
+                <div class="cap-grid">
+                    <div class="cap-card reveal">
+                        <div class="cap-icon"><i class="bi bi-speedometer2"></i></div>
+                        <div class="cap-title">核心跑步指标</div>
+                        <p class="cap-text">查看步频、触地时间、腾空时间、垂直振幅、躯干前倾角和过度跨步指数等关键指标。</p>
+                    </div>
+
+                    <div class="cap-card reveal grid-delay-1">
+                        <div class="cap-icon"><i class="bi bi-bar-chart-line"></i></div>
+                        <div class="cap-title">动态变化趋势</div>
+                        <p class="cap-text">
+                            通过波形图和散点图观察整段跑步过程中的姿态、节奏和支撑变化，而不只看最终摘要值。</p>
+                    </div>
+
+                    <div class="cap-card reveal grid-delay-2">
+                        <div class="cap-icon"><i class="bi bi-exclamation-diamond"></i></div>
+                        <div class="cap-title">主要问题诊断</div>
+                        <p class="cap-text">系统会结合整段步态变化，对本次跑步中最值得关注的问题进行诊断与优先级判断。</p>
+                    </div>
+
+                    <div class="cap-card reveal">
+                        <div class="cap-icon"><i class="bi bi-lightbulb"></i></div>
+                        <div class="cap-title">改进建议</div>
+                        <p class="cap-text">
+                            将分析结果转成更容易理解的训练方向，帮助你更明确地知道下一步该优先优化什么。</p>
+                    </div>
+
+                    <div class="cap-card reveal grid-delay-1">
+                        <div class="cap-icon"><i class="bi bi-camera-video"></i></div>
+                        <div class="cap-title">原视频复核</div>
+                        <p class="cap-text">支持原视频播放与 2D 骨架叠加，帮助你直接对照动作表现与系统分析结果。</p>
+                    </div>
+
+                    <div class="cap-card reveal grid-delay-2">
+                        <div class="cap-icon"><i class="bi bi-diagram-3"></i></div>
+                        <div class="cap-title">3D骨架复核</div>
+                        <p class="cap-text">通过 3D
+                            骨架视图从不同角度观察动作结构，更方便确认问题出现的位置与姿态细节。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Report preview -->
+        <section class="section-block pt-0" id="report-preview">
+            <div class="container">
+                <div class="section-heading reveal">
+                    <div class="section-kicker">
+                        <i class="bi bi-window-sidebar"></i>
+                        <span>结果展示</span>
+                    </div>
+                    <h2 class="section-title">分析报告长什么样</h2>
+                    <p class="section-subtitle">
+                        结果页会把数据、诊断和动作复核组合成一份完整分析报告，帮助你更系统地理解这段跑步中的表现。
+                    </p>
+                </div>
+
+                <div class="report-preview reveal">
+                    <div class="report-shell glass-card">
+                        <div class="report-grid">
+                            <div class="preview-panel">
+                                <div class="preview-title">
+                                    <span>核心跑步指标</span>
+                                    <span class="pill-mini">报告摘要</span>
+                                </div>
+
+                                <div class="preview-metric-grid">
+                                    <div class="preview-metric">
+                                        <div class="preview-metric-label">步频</div>
+                                        <div class="preview-metric-value">168 <span
+                                                style="font-size:.8rem;font-weight:700;">spm</span></div>
+                                    </div>
+                                    <div class="preview-metric">
+                                        <div class="preview-metric-label">触地时间</div>
+                                        <div class="preview-metric-value">238 <span
+                                                style="font-size:.8rem;font-weight:700;">ms</span></div>
+                                    </div>
+                                    <div class="preview-metric">
+                                        <div class="preview-metric-label">躯干前倾角</div>
+                                        <div class="preview-metric-value">10.9 <span
+                                                style="font-size:.8rem;font-weight:700;">°</span></div>
+                                    </div>
+                                    <div class="preview-metric">
+                                        <div class="preview-metric-label">腾空时间</div>
+                                        <div class="preview-metric-value">96 <span
+                                                style="font-size:.8rem;font-weight:700;">ms</span></div>
+                                    </div>
+                                    <div class="preview-metric">
+                                        <div class="preview-metric-label">垂直振幅</div>
+                                        <div class="preview-metric-value">0.12</div>
+                                    </div>
+                                    <div class="preview-metric">
+                                        <div class="preview-metric-label">过度跨步指数</div>
+                                        <div class="preview-metric-value">0.28</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="preview-panel">
+                                <div class="preview-title">
+                                    <span>主要问题诊断</span>
+                                    <span class="pill-mini">优先级排序</span>
+                                </div>
+
+                                <div class="preview-diagnosis">
+                                    <div class="preview-diagnosis-card">
+                                        <div class="preview-diagnosis-title">步频偏低</div>
+                                        <p class="preview-diagnosis-text">
+                                            当前整体步频偏低，可能会增加前伸落脚和支撑拖沓的风险，建议优先从更轻快的节奏入手优化。</p>
+                                    </div>
+
+                                    <div class="preview-diagnosis-card">
+                                        <div class="preview-diagnosis-title">左右侧不对称倾向</div>
+                                        <p class="preview-diagnosis-text">
+                                            左右脚支撑和落脚表现存在差异，建议结合视频与骨架复核，重点观察单侧动作控制是否稳定。</p>
+                                    </div>
+
+                                    <div class="preview-diagnosis-card">
+                                        <div class="preview-diagnosis-title">上身前倾偏大</div>
+                                        <p class="preview-diagnosis-text">
+                                            当前上身姿态存在前倾偏大倾向，建议区分整体前倾与折腰式前倾，避免上身过早向前折叠。</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Value -->
+        <section class="section-block pt-0">
+            <div class="container">
+                <div class="section-heading reveal">
+                    <div class="section-kicker">
+                        <i class="bi bi-shield-check"></i>
+                        <span>使用价值</span>
+                    </div>
+                    <h2 class="section-title">为什么这套系统值得使用</h2>
+                    <p class="section-subtitle">
+                        它不是简单告诉你“姿势对不对”，而是帮助你更系统地理解跑步动作中的节奏、支撑和身体控制。
+                    </p>
+                </div>
+
+                <div class="value-grid">
+                    <div class="value-card reveal">
+                        <div class="value-head">
+                            <h5 class="value-title">比肉眼观察更系统</h5>
+                            <div class="value-icon"><i class="bi bi-eye"></i></div>
+                        </div>
+                        <p class="value-text">
+                            肉眼通常只能看到某一瞬间，而系统会结合整段视频的节奏、支撑和姿态变化，给出更完整的判断。
+                        </p>
+                    </div>
+
+                    <div class="value-card reveal grid-delay-1">
+                        <div class="value-head">
+                            <h5 class="value-title">比单张截图更全面</h5>
+                            <div class="value-icon"><i class="bi bi-collection-play"></i></div>
+                        </div>
+                        <p class="value-text">
+                            跑步是连续的周期动作，只有基于完整步态过程的分析，才能更可靠地判断问题是否持续存在。
+                        </p>
+                    </div>
+
+                    <div class="value-card reveal grid-delay-2">
+                        <div class="value-head">
+                            <h5 class="value-title">比泛泛建议更具体</h5>
+                            <div class="value-icon"><i class="bi bi-bullseye"></i></div>
+                        </div>
+                        <p class="value-text">
+                            系统不仅指出问题，还会结合指标、图表和动作复核结果，帮助你明确下一步最值得优先优化的方向。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Audience -->
+        <section class="section-block pt-0">
+            <div class="container">
+                <div class="section-heading reveal">
+                    <div class="section-kicker">
+                        <i class="bi bi-people"></i>
+                        <span>适用人群</span>
+                    </div>
+                    <h2 class="section-title">适合这些用户使用</h2>
+                    <p class="section-subtitle">
+                        无论你是刚开始跑步，还是已经有训练习惯，这套系统都能帮助你更直观地复盘动作表现。
+                    </p>
+                </div>
+
+                <div class="audience-grid">
+                    <div class="audience-card reveal">
+                        <h5>跑步初学者</h5>
+                        <p>帮助建立正确的跑姿意识，减少因为落脚方式、步频或身体姿态不合理带来的训练风险。</p>
+                    </div>
+
+                    <div class="audience-card reveal grid-delay-1">
+                        <h5>有训练习惯的人</h5>
+                        <p>适合在不同配速、不同阶段下重复分析，对比训练前后的节奏、支撑和姿态变化趋势。</p>
+                    </div>
+
+                    <div class="audience-card reveal grid-delay-2">
+                        <h5>项目展示与课程场景</h5>
+                        <p>适合展示视频分析、关键点识别、步态建模、问题诊断与可视化结果页面的完整闭环能力。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Articles -->
+        <section class="section-block pt-0">
+            <div class="container">
+                <div class="section-heading reveal">
+                    <div class="section-kicker">
+                        <i class="bi bi-journal-richtext"></i>
+                        <span>知识内容</span>
+                    </div>
+                    <h2 class="section-title">跑步知识与训练建议</h2>
+                    <p class="section-subtitle">
+                        在分析结果之外，也可以通过基础知识内容进一步理解正确跑姿、损伤预防和训练安排。
+                    </p>
+                </div>
+
+                <div class="article-grid">
+                    <div class="article-card reveal">
+                        <div class="article-media">
+                            <img src="{% static 'images/article-running-posture.jpg' %}" alt="正确跑步姿势">
+                        </div>
+                        <div class="article-body">
+                            <div class="article-badge">
+                                <i class="bi bi-lightning-charge"></i>
+                                <span>姿态基础</span>
+                            </div>
+                            <div class="article-title">正确的跑步姿势全解析</div>
+                            <p class="article-text">
+                                了解如何保持更自然的身体姿态、提升跑步效率，并减少因为动作组织不合理带来的额外消耗。</p>
+                            <a href="{% url 'main:article_running_posture' %}" class="article-link">
+                                阅读全文 <i class="bi bi-arrow-right-short"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="article-card reveal grid-delay-1">
+                        <div class="article-media">
+                            <img src="{% static 'images/article-injury-prevention.jpg' %}" alt="跑步损伤预防">
+                        </div>
+                        <div class="article-body">
+                            <div class="article-badge">
+                                <i class="bi bi-shield-plus"></i>
+                                <span>损伤预防</span>
+                            </div>
+                            <div class="article-title">常见跑步损伤及预防方法</div>
+                            <p class="article-text">
+                                了解跑步膝、跟腱不适、应力性损伤等常见问题的诱因，以及如何通过训练和动作调整降低风险。</p>
+                            <a href="{% url 'main:article_injury_prevention' %}" class="article-link">
+                                阅读全文 <i class="bi bi-arrow-right-short"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="article-card reveal grid-delay-2">
+                        <div class="article-media">
+                            <img src="{% static 'images/article-training-plan.jpg' %}" alt="跑步训练计划">
+                        </div>
+                        <div class="article-body">
+                            <div class="article-badge">
+                                <i class="bi bi-activity"></i>
+                                <span>训练安排</span>
+                            </div>
+                            <div class="article-title">科学制定跑步训练计划</div>
+                            <p class="article-text">
+                                从初学者到有训练习惯的人，如何更合理地安排训练频率、强度和恢复时间，让进步更稳定。</p>
+                            <a href="{% url 'main:article_training_plan' %}" class="article-link">
+                                阅读全文 <i class="bi bi-arrow-right-short"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="cta-section">
+            <div class="container">
+                <div class="cta-card reveal">
+                    <div class="cta-inner">
+                        <div>
+                            <div class="cta-title">准备开始你的跑步姿态分析了吗？</div>
+                            <p class="cta-text">
+                                上传一段跑步视频，系统会自动生成完整分析报告。你将看到核心指标、问题诊断、趋势图表以及动作复核视图。
+                            </p>
+                        </div>
+
+                        <div class="cta-actions">
+                            {% if user.is_authenticated %}
+                                <a href="{% url 'analysis:upload' %}" class="btn btn-cta-light">
+                                    <i class="bi bi-camera-video me-2"></i>上传视频开始分析
+                                </a>
+                            {% else %}
+                                <a href="{% url 'users:register' %}" class="btn btn-cta-light">
+                                    <i class="bi bi-person-plus me-2"></i>立即注册
+                                </a>
+                                <a href="{% url 'users:login' %}" class="btn btn-cta-outline">
+                                    <i class="bi bi-box-arrow-in-right me-2"></i>用户登录
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const revealEls = document.querySelectorAll('.reveal');
+
+            if ('IntersectionObserver' in window) {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('is-visible');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, {
+                    threshold: 0.12,
+                    rootMargin: '0px 0px -30px 0px'
+                });
+
+                revealEls.forEach((el) => observer.observe(el));
+            } else {
+                revealEls.forEach((el) => el.classList.add('is-visible'));
+            }
+
+            // Hero 轻微视差
+            const heroVisual = document.querySelector('.hero-device');
+            if (heroVisual && window.innerWidth > 1199) {
+                let rafId = null;
+
+                window.addEventListener('mousemove', (e) => {
+                    if (rafId) cancelAnimationFrame(rafId);
+
+                    rafId = requestAnimationFrame(() => {
+                        const x = (e.clientX / window.innerWidth - 0.5) * 8;
+                        const y = (e.clientY / window.innerHeight - 0.5) * 6;
+                        heroVisual.style.transform =
+                            `perspective(1400px) rotateY(${(-10 + x * 0.55).toFixed(2)}deg) rotateX(${(5 - y * 0.45).toFixed(2)}deg) translateY(${(-y * 0.4).toFixed(2)}px)`;
+                    });
+                });
+            }
+
+            // 丝滑锚点滚动
+            function smoothScrollTo(targetY, duration = 900) {
+                const startY = window.pageYOffset;
+                const distance = targetY - startY;
+                const startTime = performance.now();
+
+                function easeInOutCubic(t) {
+                    return t < 0.5
+                        ? 4 * t * t * t
+                        : 1 - Math.pow(-2 * t + 2, 3) / 2;
+                }
+
+                function step(currentTime) {
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const eased = easeInOutCubic(progress);
+
+                    window.scrollTo(0, startY + distance * eased);
+
+                    if (progress < 1) {
+                        requestAnimationFrame(step);
+                    }
+                }
+
+                requestAnimationFrame(step);
+            }
+
+            document.querySelectorAll('a[href^="#"]').forEach((link) => {
+                link.addEventListener('click', function (e) {
+                    const targetId = this.getAttribute('href');
+                    if (!targetId || targetId === '#') return;
+
+                    const targetEl = document.querySelector(targetId);
+                    if (!targetEl) return;
+
+                    e.preventDefault();
+
+                    const headerOffset = 16;
+                    const targetY = targetEl.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+
+                    smoothScrollTo(targetY, 950);
+                });
+            });
+        });
+    </script>
+{% endblock %}

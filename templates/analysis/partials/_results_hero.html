@@ -1,0 +1,48 @@
+<div class="page-hero">
+    <div class="row g-4 align-items-start hero-content">
+        <div class="col-xl-8">
+            <div class="hero-kicker">
+                <i class="bi bi-stars"></i>
+                <span>跑步姿态分析报告</span>
+            </div>
+            <h1 class="hero-title">{{ video_upload.title }}</h1>
+            <p class="hero-subtitle" id="heroSummaryText">
+                系统已完成本次跑步视频分析。你可以结合核心指标、问题诊断、趋势图表和动作复核视图，系统了解这段跑步中的主要表现与改进方向。
+            </p>
+
+            <div class="hero-meta">
+                <div class="hero-chip">
+                    <i class="bi bi-calendar-event"></i>
+                    <span>{{ video_upload.uploaded_at|date:"Y-m-d H:i" }}</span>
+                </div>
+                <div class="hero-chip">
+                    <i class="bi bi-clock-history"></i>
+                    <span>{{ video_upload.duration|floatformat:1|default:"0.0" }} 秒</span>
+                </div>
+                <div class="hero-chip">
+                    <i class="bi bi-camera-reels"></i>
+                    <span>{{ video_upload.frame_count|default:0 }} 帧</span>
+                </div>
+                <div class="hero-chip">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>{{ video_upload.fps|floatformat:1|default:"30.0" }} FPS</span>
+                </div>
+                <div class="hero-chip">
+                    <i class="bi bi-check-circle"></i>
+                    <span>分析已完成</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4">
+            <div class="hero-actions">
+                <a href="{% url 'history:list' %}" class="btn btn-light btn-hero">
+                    <i class="bi bi-clock-history"></i> 历史记录
+                </a>
+                <a href="{% url 'analysis:upload' %}" class="btn btn-outline-light btn-hero">
+                    <i class="bi bi-cloud-upload"></i> 重新上传
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

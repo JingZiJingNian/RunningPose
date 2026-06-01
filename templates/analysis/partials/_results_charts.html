@@ -1,0 +1,58 @@
+<div class="glass-card section-card mt-4">
+    <div class="section-header">
+        <div>
+            <div class="section-title">动态变化趋势</div>
+            <p class="section-subtitle">观察整段跑步过程中，关键指标如何随时间变化，而不只看最终的摘要结果。</p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-12">
+            <div class="chart-card">
+                <h6 class="chart-title">身体姿态变化</h6>
+                <p class="section-subtitle mb-3">用于观察身体上下起伏与上身前倾是否稳定。</p>
+                <div class="row g-4">
+                    <div class="col-xl-6">
+                        <div class="chart-wrap">
+                            <canvas id="verticalOscillationChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="chart-wrap">
+                            <canvas id="trunkLeanChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="chart-card">
+                <h6 class="chart-title">步态节奏与支撑变化</h6>
+                <p class="section-subtitle mb-3">用于观察步频、步幅、触地时间与腾空时间在整段跑步中的分布情况。</p>
+                <div class="row g-4">
+                    <div class="col-xl-6">
+                        <div class="chart-wrap">
+                            <canvas id="cadenceScatterChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="chart-wrap">
+                            <canvas id="strideScatterChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="chart-wrap">
+                            <canvas id="gctScatterChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-xl-6">
+                        <div class="chart-wrap">
+                            <canvas id="flightScatterChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

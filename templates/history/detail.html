@@ -1,0 +1,496 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ analysis.title }} - 历史详情{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --dt-bg: #f4f7fc;
+        --dt-card: rgba(255,255,255,.88);
+        --dt-line: rgba(15,23,42,.08);
+        --dt-text: #0f172a;
+        --dt-muted: #64748b;
+        --dt-brand: #4f46e5;
+        --dt-brand-2: #0ea5e9;
+        --dt-good: #16a34a;
+        --dt-warn: #f59e0b;
+        --dt-danger: #ef4444;
+        --dt-shadow: 0 20px 50px rgba(15,23,42,.08);
+    }
+
+    body {
+        background:
+            radial-gradient(circle at top left, rgba(79,70,229,.07), transparent 24%),
+            radial-gradient(circle at top right, rgba(14,165,233,.08), transparent 26%),
+            linear-gradient(180deg, #f8fbff 0%, #f4f6fb 100%);
+    }
+
+    .detail-shell {
+        padding: 3rem 0 5rem;
+    }
+
+    .glass-card {
+        background: var(--dt-card);
+        border: 1px solid rgba(255,255,255,.68);
+        border-radius: 28px;
+        box-shadow: var(--dt-shadow);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+    }
+
+    .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-bottom: 1.2rem;
+    }
+
+    .hero-card {
+        padding: 1.8rem;
+        margin-bottom: 1.4rem;
+        position: relative;
+        overflow: hidden;
+        background:
+            linear-gradient(135deg, rgba(79,70,229,.96), rgba(14,165,233,.90));
+        color: #fff;
+        box-shadow: 0 30px 80px rgba(79,70,229,.18);
+    }
+
+    .hero-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+            radial-gradient(circle at 20% 25%, rgba(255,255,255,.15), transparent 20%),
+            radial-gradient(circle at 80% 35%, rgba(255,255,255,.10), transparent 18%);
+        pointer-events: none;
+    }
+
+    .hero-inner {
+        position: relative;
+        z-index: 2;
+    }
+
+    .hero-kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: .45rem;
+        border-radius: 999px;
+        padding: .45rem .85rem;
+        background: rgba(255,255,255,.12);
+        border: 1px solid rgba(255,255,255,.18);
+        font-size: .9rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .hero-title {
+        font-size: clamp(1.8rem, 4vw, 3rem);
+        font-weight: 900;
+        line-height: 1.06;
+        margin-bottom: .7rem;
+        letter-spacing: -0.03em;
+    }
+
+    .hero-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .75rem;
+        margin-top: 1rem;
+    }
+
+    .hero-chip {
+        border-radius: 999px;
+        padding: .5rem .85rem;
+        background: rgba(255,255,255,.10);
+        border: 1px solid rgba(255,255,255,.16);
+        color: rgba(255,255,255,.92);
+        font-size: .9rem;
+        font-weight: 600;
+    }
+
+    .page-grid {
+        display: grid;
+        grid-template-columns: 1.05fr .95fr;
+        gap: 1.4rem;
+        align-items: start;
+    }
+
+    .section-card {
+        padding: 1.35rem;
+    }
+
+    .section-title {
+        font-size: 1.12rem;
+        font-weight: 800;
+        color: var(--dt-text);
+        margin-bottom: .3rem;
+    }
+
+    .section-subtitle {
+        color: var(--dt-muted);
+        line-height: 1.75;
+        margin-bottom: 1rem;
+    }
+
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: .9rem;
+        margin-bottom: 1rem;
+    }
+
+    .summary-item {
+        border-radius: 20px;
+        padding: 1rem;
+        background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(248,250,252,.92));
+        border: 1px solid rgba(15,23,42,.05);
+    }
+
+    .summary-label {
+        color: var(--dt-muted);
+        font-size: .82rem;
+        margin-bottom: .35rem;
+    }
+
+    .summary-value {
+        color: var(--dt-text);
+        font-weight: 900;
+        font-size: 1.25rem;
+        line-height: 1.1;
+    }
+
+    .issue-list {
+        display: grid;
+        gap: .8rem;
+    }
+
+    .issue-card {
+        border-radius: 22px;
+        padding: 1rem 1rem 1rem 1.1rem;
+        border: 1px solid rgba(15,23,42,.05);
+        background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(250,251,255,.94));
+        position: relative;
+        overflow: hidden;
+    }
+
+    .issue-card::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 14px;
+        bottom: 14px;
+        width: 4px;
+        border-radius: 999px;
+        background: linear-gradient(180deg, #4f46e5, #0ea5e9);
+    }
+
+    .issue-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: .5rem;
+    }
+
+    .issue-title {
+        font-weight: 800;
+        color: var(--dt-text);
+        line-height: 1.5;
+    }
+
+    .issue-badge {
+        border-radius: 999px;
+        padding: .35rem .65rem;
+        font-size: .76rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .issue-badge.high {
+        background: rgba(239,68,68,.12);
+        color: #b91c1c;
+    }
+
+    .issue-badge.medium {
+        background: rgba(245,158,11,.14);
+        color: #b45309;
+    }
+
+    .issue-badge.low {
+        background: rgba(22,163,74,.12);
+        color: #166534;
+    }
+
+    .issue-text {
+        color: var(--dt-muted);
+        line-height: 1.75;
+        margin-bottom: .55rem;
+    }
+
+    .issue-suggestion {
+        color: #334155;
+        line-height: 1.75;
+        margin: 0;
+    }
+
+    .mini-stat-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: .8rem;
+    }
+
+    .mini-stat {
+        border-radius: 18px;
+        padding: .95rem;
+        background: rgba(255,255,255,.88);
+        border: 1px solid rgba(15,23,42,.05);
+    }
+
+    .mini-stat-label {
+        color: var(--dt-muted);
+        font-size: .8rem;
+        margin-bottom: .35rem;
+    }
+
+    .mini-stat-value {
+        color: var(--dt-text);
+        font-weight: 800;
+    }
+
+    .action-stack {
+        display: grid;
+        gap: .75rem;
+    }
+
+    .empty-inline {
+        border-radius: 20px;
+        padding: 1rem;
+        background: rgba(255,255,255,.86);
+        border: 1px solid rgba(15,23,42,.05);
+        color: var(--dt-muted);
+    }
+
+    @media (max-width: 1199px) {
+        .page-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .summary-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .detail-shell {
+            padding-top: 2rem;
+        }
+
+        .hero-card,
+        .section-card {
+            padding: 1.2rem;
+        }
+
+        .summary-grid,
+        .mini-stat-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container detail-shell">
+    <div class="topbar">
+        <a href="{% url 'history:list' %}" class="btn btn-outline-secondary rounded-pill px-4">
+            <i class="bi bi-arrow-left me-2"></i>返回历史记录
+        </a>
+        <div class="d-flex gap-2 flex-wrap">
+            <a href="{% url 'analysis:results' analysis.video_upload_id %}" class="btn btn-primary rounded-pill px-4">
+                <i class="bi bi-bar-chart-line me-2"></i>打开完整分析报告
+            </a>
+            <button type="button"
+                    class="btn btn-outline-danger rounded-pill px-4"
+                    onclick="confirmDelete({{ analysis.video_upload_id }}, '{{ analysis.title|escapejs }}')">
+                <i class="bi bi-trash me-2"></i>删除记录
+            </button>
+        </div>
+    </div>
+
+    <div class="hero-card glass-card">
+        <div class="hero-inner">
+            <div class="hero-kicker">
+                <i class="bi bi-folder2-open"></i>
+                <span>历史分析详情</span>
+            </div>
+            <div class="hero-title">{{ analysis.title }}</div>
+            <div class="hero-meta">
+                <div class="hero-chip"><i class="bi bi-calendar-event me-2"></i>{{ analysis.analyzed_at|date:"Y-m-d H:i" }}</div>
+                <div class="hero-chip"><i class="bi bi-clock-history me-2"></i>{{ analysis.duration|floatformat:1 }} 秒</div>
+                <div class="hero-chip"><i class="bi bi-camera-reels me-2"></i>{{ analysis.analyzed_frames }} 帧</div>
+                <div class="hero-chip"><i class="bi bi-exclamation-circle me-2"></i>{{ analysis.issues_count }} 项问题</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-grid">
+        <div class="glass-card section-card">
+            <div class="section-title">本次记录摘要</div>
+            <p class="section-subtitle">这里汇总了这条历史记录的核心信息与主要问题，便于快速回顾本次分析的重点。</p>
+
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <div class="summary-label">步频</div>
+                    <div class="summary-value">{% if cadence_value != None %}{{ cadence_value }} spm{% else %}--{% endif %}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">触地时间</div>
+                    <div class="summary-value">{% if gct_value != None %}{{ gct_value }} ms{% else %}--{% endif %}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">腾空时间</div>
+                    <div class="summary-value">{% if flight_value != None %}{{ flight_value }} ms{% else %}--{% endif %}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">垂直振幅</div>
+                    <div class="summary-value">{% if vo_value != None %}{{ vo_value }}{% else %}--{% endif %}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">躯干前倾角</div>
+                    <div class="summary-value">{% if trunk_value != None %}{{ trunk_value }}°{% else %}--{% endif %}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">过度跨步指数</div>
+                    <div class="summary-value">{% if osi_value != None %}{{ osi_value }}{% else %}--{% endif %}</div>
+                </div>
+            </div>
+
+            <div class="section-title mt-4">主要问题诊断</div>
+            <p class="section-subtitle">以下内容来自这次分析生成的问题诊断结果，建议优先关注高优先级项目。</p>
+
+            {% if issues %}
+                <div class="issue-list">
+                    {% for issue in issues %}
+                    <div class="issue-card">
+                        <div class="issue-top">
+                            <div class="issue-title">{{ issue.message }}</div>
+                            <span class="issue-badge {{ issue.severity|default:'low' }}">
+                                {% if issue.severity == 'high' %}
+                                    高优先级
+                                {% elif issue.severity == 'medium' %}
+                                    中优先级
+                                {% else %}
+                                    低优先级
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="issue-text">
+                            置信度：
+                            {% if issue.confidence != None %}
+                                {{ issue.confidence|floatformat:2 }}
+                            {% else %}
+                                --
+                            {% endif %}
+                        </div>
+                        <p class="issue-suggestion"><strong>建议：</strong>{{ issue.suggestion|default:"结合完整分析报告继续查看。" }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-inline">这条历史记录没有生成明确的问题诊断，可能整体表现较稳定，或当时的数据不够完整。</div>
+            {% endif %}
+        </div>
+
+        <div class="action-stack">
+            <div class="glass-card section-card">
+                <div class="section-title">记录信息</div>
+                <p class="section-subtitle">用于快速确认本次分析的基本情况。</p>
+
+                <div class="mini-stat-grid">
+                    <div class="mini-stat">
+                        <div class="mini-stat-label">标题</div>
+                        <div class="mini-stat-value">{{ analysis.title }}</div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="mini-stat-label">分析时间</div>
+                        <div class="mini-stat-value">{{ analysis.analyzed_at|date:"m-d H:i" }}</div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="mini-stat-label">视频时长</div>
+                        <div class="mini-stat-value">{{ analysis.duration|floatformat:1 }} 秒</div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="mini-stat-label">分析帧数</div>
+                        <div class="mini-stat-value">{{ analysis.analyzed_frames }} 帧</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card section-card">
+                <div class="section-title">后续操作</div>
+                <p class="section-subtitle">你可以继续打开完整分析报告，或开始一条新的分析记录。</p>
+
+                <div class="d-grid gap-2">
+                    <a href="{% url 'analysis:results' analysis.video_upload_id %}" class="btn btn-primary rounded-pill">
+                        <i class="bi bi-bar-chart-line me-2"></i>查看完整分析报告
+                    </a>
+                    <a href="{% url 'analysis:upload' %}" class="btn btn-outline-primary rounded-pill">
+                        <i class="bi bi-camera-video me-2"></i>开始新的分析
+                    </a>
+                    <button class="btn btn-outline-danger rounded-pill"
+                            onclick="confirmDelete({{ analysis.video_upload_id }}, '{{ analysis.title|escapejs }}')">
+                        <i class="bi bi-trash me-2"></i>删除这条记录
+                    </button>
+                </div>
+            </div>
+
+            <div class="glass-card section-card">
+                <div class="section-title">查看建议</div>
+                <p class="section-subtitle">如何更高效地复盘这条历史记录。</p>
+                <ul class="mb-0 text-muted" style="line-height: 1.9; padding-left: 1.1rem;">
+                    <li>先看问题诊断，明确这次最值得优先处理的方向。</li>
+                    <li>再打开完整分析报告，结合图表与动作复核进一步确认细节。</li>
+                    <li>建议在相同拍摄条件下多次分析，对比训练前后的变化趋势。</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content" style="border-radius: 22px; border: none;">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">确认删除记录</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p id="deleteMessage">确定要删除这条分析记录吗？</p>
+                <p class="text-danger mb-0">此操作不可撤销，相关数据将被一并删除。</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">取消</button>
+                <form id="deleteForm" method="post" action="">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger rounded-pill px-4">确认删除</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function confirmDelete(resultId, title) {
+    const form = document.getElementById('deleteForm');
+    form.action = `/history/${resultId}/delete/`;
+    document.getElementById('deleteMessage').textContent = `确定要删除分析记录 “${title}” 吗？`;
+    const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    modal.show();
+}
+</script>
+{% endblock %}

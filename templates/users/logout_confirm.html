@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}确认退出 - GaitFix{% endblock %}
+
+{% block extra_css %}
+<style>
+    .logout-shell {
+        padding: 4rem 0 6rem;
+    }
+
+    .logout-card {
+        border: 1px solid rgba(255,255,255,.72);
+        border-radius: 30px;
+        background: rgba(255,255,255,.88);
+        box-shadow: 0 22px 50px rgba(15,23,42,.08);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        padding: 2.2rem;
+        text-align: center;
+    }
+
+    .logout-icon {
+        width: 110px;
+        height: 110px;
+        margin: 0 auto 1rem;
+        border-radius: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, rgba(245,158,11,.12), rgba(239,68,68,.12));
+        color: #d97706;
+        font-size: 3rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container logout-shell">
+    <div class="row justify-content-center">
+        <div class="col-lg-5 col-md-7">
+            <div class="logout-card">
+                <div class="logout-icon">
+                    <i class="bi bi-question-circle"></i>
+                </div>
+                <h2 class="fw-bold mb-3">确认退出登录</h2>
+                <p class="text-muted mb-4">你确定要退出当前账户吗？退出后可以稍后重新登录继续查看分析记录。</p>
+
+                <form method="post" class="d-flex gap-2 justify-content-center flex-wrap">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger rounded-pill px-4">
+                        <i class="bi bi-box-arrow-right me-2"></i>确认退出
+                    </button>
+                    <a href="{% url 'main:dashboard' %}" class="btn btn-outline-secondary rounded-pill px-4">
+                        取消
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

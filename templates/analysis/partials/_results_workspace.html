@@ -1,0 +1,208 @@
+<div class="lab-grid mt-4">
+    <div class="glass-card workspace-card">
+        <div class="workspace-head">
+            <div>
+                <div class="section-title mb-1" id="visualizationTitle">
+                    <i class="bi bi-diagram-3"></i> 动作复核视图
+                </div>
+                <p class="section-subtitle mb-0">你可以结合原视频与 3D 骨架，进一步确认本次分析中问题出现的位置与动作表现。</p>
+            </div>
+
+            <div class="toggle-group">
+                <button class="toggle-btn" id="modeSkeletonBtn" type="button" onclick="setVisualizationMode('skeleton')">
+                    <i class="bi bi-diagram-3"></i> 仅查看骨架
+                </button>
+                <button class="toggle-btn active" id="modeVideoBtn" type="button" onclick="setVisualizationMode('video')">
+                    <i class="bi bi-camera-video"></i> 视频与骨架
+                </button>
+            </div>
+        </div>
+
+        <div class="workspace-body">
+            <div class="visual-grid">
+                <div class="visual-panel" id="videoPanel">
+                    <div class="visual-panel-header">
+                        <div class="visual-panel-title">
+                            <i class="bi bi-camera-video"></i>
+                            原视频复核
+                        </div>
+                        <span class="small text-light-50">支持叠加 2D 骨架进行对照观察</span>
+                    </div>
+
+                    <div class="video-stage">
+                        <video id="originalVideoSource"
+                               class="hidden-video-source"
+                               preload="auto"
+                               playsinline
+                               muted
+                               src="{{ video_upload.video_file.url }}">
+                            你的浏览器不支持 HTML5 视频播放。
+                        </video>
+
+                        <div class="video-canvas-wrap">
+                            <canvas id="videoCanvas"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="control-panel">
+                        <div class="control-title">播放控制</div>
+                        <div class="controls">
+                            <div class="control-row">
+                                <button class="btn btn-outline-light btn-sm rounded-pill px-3"
+                                        id="videoPlayBtn" type="button" onclick="toggleVideoPlayback()">
+                                    <i class="bi bi-play-fill" id="videoPlayIcon"></i>
+                                    <span id="videoPlayText">播放视频</span>
+                                </button>
+
+                                <label class="overlay-switch">
+                                    <input class="form-check-input" type="checkbox" id="toggleOverlay" checked>
+                                    <span>叠加 2D 骨架</span>
+                                </label>
+
+                                <span class="control-meta" id="videoTime">时间: 0.0s / 0.0s</span>
+                            </div>
+
+                            <div class="control-row">
+                                <input type="range" class="form-range" id="videoTimeSlider" min="0" max="100" value="0" step="0.01">
+                            </div>
+
+                            <div class="control-row">
+                                <span class="control-meta">播放速度</span>
+                                <input type="range" class="form-range" id="videoSpeedSlider" min="0" max="6" value="3" step="1">
+                                <span class="control-meta" id="videoSpeedValue">1.0x</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="visual-panel" id="skeletonPanel">
+                    <div class="visual-panel-header">
+                        <div class="visual-panel-title">
+                            <i class="bi bi-diagram-3"></i>
+                            3D骨架复核
+                        </div>
+                        <span class="small text-light-50">支持独立播放、独立速度和逐帧查看</span>
+                    </div>
+
+                    <div class="canvas-container">
+                        <div class="loading-overlay" id="skeletonLoading">
+                            <div class="text-center">
+                                <div class="spinner-border text-light mb-3" role="status">
+                                    <span class="visually-hidden">加载中...</span>
+                                </div>
+                                <p class="mb-1">正在加载 3D 骨架场景</p>
+                                <small class="text-white-50">请稍候…</small>
+                            </div>
+                        </div>
+                        <canvas id="skeletonCanvas"></canvas>
+                    </div>
+
+                    <div class="control-panel">
+                        <div class="control-title">骨架控制</div>
+                        <div class="controls">
+                            <div class="control-row">
+                                <button class="btn btn-outline-light btn-sm rounded-pill px-3"
+                                        type="button" onclick="toggleSkeletonPlayback()">
+                                    <i class="bi bi-play-fill" id="skeletonPlayIcon"></i>
+                                    <span id="skeletonPlayText">播放骨架</span>
+                                </button>
+
+                                <button class="btn btn-outline-light btn-sm rounded-pill px-3"
+                                        type="button" onclick="resetCameraView()">
+                                    <i class="bi bi-bounding-box"></i> 重置视角
+                                </button>
+
+                                <span class="control-meta" id="frameInfo">帧: 0 / 0</span>
+                            </div>
+
+                            <div class="control-row">
+                                <input type="range" class="form-range" id="frameSlider" min="0" max="0" value="0">
+                            </div>
+
+                            <div class="control-row">
+                                <span class="control-meta">播放速度</span>
+                                <input type="range" class="form-range" id="speedSlider" min="0" max="6" value="3" step="1">
+                                <span class="control-meta" id="speedValue">1.0x</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="side-stack">
+        <div class="glass-card section-card">
+            <div class="section-header">
+                <div>
+                    <div class="section-title">本次摘要</div>
+                    <p class="section-subtitle">便于快速回顾的关键统计</p>
+                </div>
+            </div>
+            <div class="mini-stat-grid">
+                <div class="mini-stat">
+                    <div class="mini-stat-label">总步数</div>
+                    <div class="mini-stat-value" id="miniTotalSteps">--</div>
+                </div>
+                <div class="mini-stat">
+                    <div class="mini-stat-label">主要问题数</div>
+                    <div class="mini-stat-value" id="miniIssueCount">--</div>
+                </div>
+                <div class="mini-stat">
+                    <div class="mini-stat-label">左 / 右初始触地</div>
+                    <div class="mini-stat-value" id="miniIcCounts">--</div>
+                </div>
+                <div class="mini-stat">
+                    <div class="mini-stat-label">左 / 右离地</div>
+                    <div class="mini-stat-value" id="miniToCounts">--</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-card section-card" id="overlayOptions">
+            <div class="section-header">
+                <div>
+                    <div class="section-title">观察提示</div>
+                    <p class="section-subtitle">如何更有效地结合视频和骨架理解问题</p>
+                </div>
+            </div>
+            <ul class="legend-list">
+                <li class="legend-item">
+                    <span class="legend-dot"></span>
+                    先观察落脚点与骨盆中心的相对位置，确认是否存在明显的前伸落脚。
+                </li>
+                <li class="legend-item">
+                    <span class="legend-dot"></span>
+                    再看上身前倾是否稳定，避免把折腰误判为自然前倾。
+                </li>
+                <li class="legend-item">
+                    <span class="legend-dot"></span>
+                    若诊断提示左右不对称，可重点比较左右脚的支撑时间与落脚方式是否一致。
+                </li>
+            </ul>
+        </div>
+
+        <div class="glass-card section-card">
+            <div class="section-header">
+                <div>
+                    <div class="section-title">使用建议</div>
+                    <p class="section-subtitle">如何让分析结果更有参考价值</p>
+                </div>
+            </div>
+            <ul class="legend-list">
+                <li class="legend-item">
+                    <span class="legend-dot"></span>
+                    尽量使用相同拍摄角度、相近配速和相似距离进行重复分析，便于前后对比。
+                </li>
+                <li class="legend-item">
+                    <span class="legend-dot"></span>
+                    不要只盯某一个指标，建议结合问题诊断、趋势图表和动作复核一起判断。
+                </li>
+                <li class="legend-item">
+                    <span class="legend-dot"></span>
+                    若准备进行训练调整，建议优先处理高优先级且高置信度的问题。
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

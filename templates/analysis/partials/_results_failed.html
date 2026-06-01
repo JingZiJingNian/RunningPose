@@ -1,0 +1,23 @@
+<div class="status-state">
+    <div class="glass-card status-card">
+        <div class="display-icon text-danger">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+        </div>
+        <h1 class="h2 fw-bold mb-3">分析报告生成失败</h1>
+        <p class="text-muted mb-3">系统在处理这段视频时遇到了问题。建议检查视频清晰度、拍摄角度和时间片段设置后重新上传。</p>
+        {% if error_message %}
+            <div class="alert alert-danger text-start mb-4">
+                <strong>错误详情：</strong><br>
+                {{ error_message }}
+            </div>
+        {% endif %}
+        <div class="d-flex gap-2 justify-content-center flex-wrap">
+            <a href="{% url 'analysis:upload' %}" class="btn btn-primary btn-lg rounded-pill px-4">
+                <i class="bi bi-arrow-repeat"></i> 重新上传视频
+            </a>
+            <a href="{% url 'history:list' %}" class="btn btn-outline-secondary btn-lg rounded-pill px-4">
+                <i class="bi bi-clock-history"></i> 查看历史记录
+            </a>
+        </div>
+    </div>
+</div>

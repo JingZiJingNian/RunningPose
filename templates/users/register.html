@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+
+{% block title %}注册 - GaitFix{% endblock %}
+
+{% block extra_css %}
+<style>
+    .auth-shell {
+        padding: 3rem 0 5rem;
+    }
+
+    .auth-card {
+        border: 1px solid rgba(255,255,255,.72);
+        border-radius: 30px;
+        background: rgba(255,255,255,.88);
+        box-shadow: 0 22px 50px rgba(15,23,42,.08);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        overflow: hidden;
+    }
+
+    .auth-hero {
+        background: linear-gradient(135deg, rgba(79,70,229,.96), rgba(14,165,233,.90));
+        color: #fff;
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .auth-hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+            radial-gradient(circle at 20% 25%, rgba(255,255,255,.15), transparent 22%),
+            radial-gradient(circle at 80% 35%, rgba(255,255,255,.10), transparent 18%);
+    }
+
+    .auth-hero-inner {
+        position: relative;
+        z-index: 2;
+    }
+
+    .auth-kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: .45rem;
+        border-radius: 999px;
+        padding: .45rem .8rem;
+        background: rgba(255,255,255,.12);
+        border: 1px solid rgba(255,255,255,.18);
+        font-size: .88rem;
+        font-weight: 700;
+        margin-bottom: .9rem;
+    }
+
+    .auth-title {
+        font-size: 2.1rem;
+        font-weight: 900;
+        line-height: 1.05;
+        margin-bottom: .7rem;
+        letter-spacing: -0.03em;
+    }
+
+    .auth-desc {
+        color: rgba(255,255,255,.92);
+        line-height: 1.8;
+        margin: 0;
+    }
+
+    .auth-body {
+        padding: 2rem;
+    }
+
+    .auth-label {
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: .55rem;
+    }
+
+    .auth-input {
+        height: 56px;
+        border-radius: 18px;
+        border: 1px solid rgba(15,23,42,.10);
+        background: rgba(255,255,255,.86);
+        padding: 0 1rem;
+        transition: border-color .2s ease, box-shadow .2s ease;
+    }
+
+    .auth-input:focus {
+        border-color: rgba(79,70,229,.42);
+        box-shadow: 0 0 0 4px rgba(79,70,229,.10);
+    }
+
+    .auth-submit {
+        height: 56px;
+        border: none;
+        border-radius: 18px;
+        font-weight: 800;
+        background: linear-gradient(135deg, #4f46e5, #0ea5e9);
+        box-shadow: 0 22px 48px rgba(79,70,229,.18);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container auth-shell">
+    <div class="row justify-content-center">
+        <div class="col-lg-5 col-md-7">
+            <div class="auth-card">
+                <div class="auth-hero">
+                    <div class="auth-hero-inner">
+                        <div class="auth-kicker">
+                            <i class="bi bi-person-plus"></i>
+                            <span>创建账户</span>
+                        </div>
+                        <div class="auth-title">开始使用 GaitFix</div>
+                        <p class="auth-desc">
+                            注册后即可上传跑步视频、生成分析报告、查看历史记录，并进入你的个人分析中心。
+                        </p>
+                    </div>
+                </div>
+
+                <div class="auth-body">
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label for="id_username" class="auth-label">用户名</label>
+                            <input type="text"
+                                   class="form-control auth-input"
+                                   id="id_username"
+                                   name="username"
+                                   required
+                                   value="{{ form.username.value|default:'' }}">
+                            {% if form.username.errors %}
+                                <div class="text-danger small mt-2">
+                                    {% for error in form.username.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_password1" class="auth-label">密码</label>
+                            <input type="password"
+                                   class="form-control auth-input"
+                                   id="id_password1"
+                                   name="password1"
+                                   required>
+                            {% if form.password1.errors %}
+                                <div class="text-danger small mt-2">
+                                    {% for error in form.password1.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="id_password2" class="auth-label">确认密码</label>
+                            <input type="password"
+                                   class="form-control auth-input"
+                                   id="id_password2"
+                                   name="password2"
+                                   required>
+                            {% if form.password2.errors %}
+                                <div class="text-danger small mt-2">
+                                    {% for error in form.password2.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary auth-submit">
+                                <i class="bi bi-person-plus me-2"></i>注册
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="text-center mt-4">
+                        <span class="text-muted">已有账号？</span>
+                        <a href="{% url 'users:login' %}" class="fw-bold text-decoration-none">立即登录</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,59 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Media uploads
+media/
+uploads/
+
+# Static collected files
+staticfiles/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Celery / Redis
+celerybeat-schedule
+celerybeat.pid
+
+# Test / cache
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Model / video outputs
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.webm
+*.npy
+*.pkl
+*.pt
+*.pth

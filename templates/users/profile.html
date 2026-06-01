@@ -1,0 +1,534 @@
+{% extends 'base.html' %}
+
+{% block title %}个人资料 - GaitFix{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-shell {
+        padding: 3rem 0 5rem;
+    }
+
+    .glass-card {
+        border: 1px solid rgba(255,255,255,.72);
+        border-radius: 28px;
+        background: rgba(255,255,255,.88);
+        box-shadow: 0 22px 50px rgba(15,23,42,.08);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+    }
+
+    .profile-hero {
+        padding: 1.8rem;
+        margin-bottom: 1.4rem;
+        background: linear-gradient(135deg, rgba(79,70,229,.96), rgba(14,165,233,.90));
+        color: #fff;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .profile-hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+            radial-gradient(circle at 18% 25%, rgba(255,255,255,.14), transparent 22%),
+            radial-gradient(circle at 80% 35%, rgba(255,255,255,.10), transparent 18%);
+    }
+
+    .profile-hero-inner {
+        position: relative;
+        z-index: 2;
+    }
+
+    .profile-kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: .45rem;
+        border-radius: 999px;
+        padding: .45rem .8rem;
+        background: rgba(255,255,255,.12);
+        border: 1px solid rgba(255,255,255,.18);
+        font-size: .88rem;
+        font-weight: 700;
+        margin-bottom: .9rem;
+    }
+
+    .profile-title {
+        font-size: 2rem;
+        font-weight: 900;
+        line-height: 1.08;
+        margin-bottom: .55rem;
+        letter-spacing: -0.03em;
+    }
+
+    .profile-desc {
+        color: rgba(255,255,255,.92);
+        line-height: 1.8;
+        margin: 0;
+    }
+
+    .profile-grid {
+        display: grid;
+        grid-template-columns: 340px 1fr;
+        gap: 1.4rem;
+        align-items: start;
+    }
+
+    .side-card,
+    .main-card {
+        padding: 1.4rem;
+    }
+
+    .avatar-wrap {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .avatar-preview {
+        width: 150px;
+        height: 150px;
+        border-radius: 999px;
+        object-fit: cover;
+        border: 4px solid rgba(255,255,255,.85);
+        box-shadow: 0 18px 40px rgba(15,23,42,.10);
+        background: #fff;
+    }
+
+    .avatar-fallback {
+        width: 150px;
+        height: 150px;
+        margin: 0 auto;
+        border-radius: 999px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 5rem;
+        color: #94a3b8;
+        background: linear-gradient(135deg, rgba(79,70,229,.08), rgba(14,165,233,.10));
+        border: 4px solid rgba(255,255,255,.85);
+        box-shadow: 0 18px 40px rgba(15,23,42,.10);
+    }
+
+    .upload-btn-wrap {
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .upload-btn-wrap input[type=file] {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .section-title {
+        font-size: 1.12rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin-bottom: .35rem;
+    }
+
+    .section-subtitle {
+        color: #64748b;
+        line-height: 1.75;
+        margin-bottom: 1rem;
+    }
+
+    .info-list {
+        display: grid;
+        gap: .8rem;
+    }
+
+    .info-item {
+        border-radius: 18px;
+        padding: .9rem 1rem;
+        background: rgba(255,255,255,.82);
+        border: 1px solid rgba(15,23,42,.05);
+    }
+
+    .info-label {
+        font-size: .8rem;
+        color: #64748b;
+        margin-bottom: .25rem;
+    }
+
+    .info-value {
+        color: #0f172a;
+        font-weight: 700;
+    }
+
+    .form-card {
+        border-radius: 24px;
+        padding: 1.2rem;
+        background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(248,250,252,.92));
+        border: 1px solid rgba(15,23,42,.05);
+        margin-bottom: 1rem;
+    }
+
+    .form-title {
+        font-size: 1rem;
+        font-weight: 800;
+        margin-bottom: .8rem;
+        color: #0f172a;
+    }
+
+    .field-label {
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: .5rem;
+    }
+
+    .modern-input,
+    .modern-select,
+    .modern-textarea {
+        border-radius: 18px;
+        border: 1px solid rgba(15,23,42,.10);
+        background: rgba(255,255,255,.88);
+        transition: border-color .2s ease, box-shadow .2s ease;
+    }
+
+    .modern-input,
+    .modern-select {
+        min-height: 54px;
+    }
+
+    .modern-textarea {
+        min-height: 120px;
+        padding-top: .9rem;
+    }
+
+    .modern-input:focus,
+    .modern-select:focus,
+    .modern-textarea:focus {
+        border-color: rgba(79,70,229,.42);
+        box-shadow: 0 0 0 4px rgba(79,70,229,.10);
+    }
+
+    .bmi-card {
+        border-radius: 20px;
+        padding: 1rem;
+        background: linear-gradient(180deg, rgba(79,70,229,.05), rgba(14,165,233,.06));
+        border: 1px solid rgba(79,70,229,.10);
+    }
+
+    .bmi-label {
+        font-size: .82rem;
+        color: #64748b;
+        margin-bottom: .3rem;
+    }
+
+    .bmi-value {
+        font-weight: 900;
+        font-size: 1.25rem;
+    }
+
+    .bmi-normal { color: #16a34a; }
+    .bmi-underweight { color: #0891b2; }
+    .bmi-overweight { color: #d97706; }
+    .bmi-obese { color: #dc2626; }
+
+    @media (max-width: 1199px) {
+        .profile-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container profile-shell">
+    <div class="profile-hero glass-card">
+        <div class="profile-hero-inner">
+            <div class="profile-kicker">
+                <i class="bi bi-person"></i>
+                <span>个人资料</span>
+            </div>
+            <div class="profile-title">管理你的账户信息</div>
+            <p class="profile-desc">
+                在这里完善你的基础资料、跑步相关信息和头像设置，这些内容可以帮助你更方便地管理自己的分析记录。
+            </p>
+        </div>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" id="profileForm">
+    {% csrf_token %}
+
+    <div class="profile-grid">
+        <div class="glass-card side-card">
+            <div class="avatar-wrap">
+                {% if user.userprofile.avatar %}
+                    <img src="{{ user.userprofile.avatar.url }}" alt="头像" class="avatar-preview mb-3" id="avatarPreview">
+                {% else %}
+                    <div class="avatar-fallback mb-3" id="defaultAvatar">
+                        <i class="bi bi-person-circle"></i>
+                    </div>
+                    <img src="" alt="头像预览" class="avatar-preview mb-3" id="avatarPreview" style="display:none;">
+                {% endif %}
+
+                <div class="upload-btn-wrap mb-2">
+                    <button type="button" class="btn btn-outline-primary rounded-pill px-4">
+                        <i class="bi bi-camera me-2"></i>修改头像
+                    </button>
+                    <input type="file" class="form-control" id="id_avatar" name="avatar" accept="image/*" onchange="previewAvatar(this)">
+                </div>
+
+                {% if user.userprofile.avatar %}
+                <div class="mt-2">
+                    <button type="button" class="btn btn-outline-danger rounded-pill px-4" onclick="deleteAvatar()">
+                        <i class="bi bi-trash me-2"></i>删除头像
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+
+            <hr class="my-4">
+
+            <div class="section-title">账户概览</div>
+            <p class="section-subtitle">当前账户状态与基础信息</p>
+
+            <div class="info-list">
+                <div class="info-item">
+                    <div class="info-label">用户名</div>
+                    <div class="info-value">{{ user.username }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">注册时间</div>
+                    <div class="info-value">{{ user.date_joined|date:"Y-m-d" }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">最后登录</div>
+                    <div class="info-value">{{ user.last_login|date:"Y-m-d H:i" }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">邮箱验证</div>
+                    <div class="info-value">
+                        {% if user.userprofile.email_verified %}
+                            <span class="badge bg-success">已验证</span>
+                        {% else %}
+                            <span class="badge bg-warning text-dark">未验证</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-grid gap-2 mt-4">
+                <a href="{% url 'users:security_settings' %}" class="btn btn-outline-primary rounded-pill">
+                    <i class="bi bi-shield-lock me-2"></i>安全设置
+                </a>
+                <a href="{% url 'users:login_history' %}" class="btn btn-outline-secondary rounded-pill">
+                    <i class="bi bi-clock-history me-2"></i>登录历史
+                </a>
+            </div>
+        </div>
+
+        <div class="glass-card main-card">
+            <div class="form-card">
+                <div class="form-title">基本信息</div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="id_first_name" class="field-label">姓</label>
+                        <input type="text" class="form-control modern-input" id="id_first_name" name="first_name" value="{{ user_form.first_name.value|default:'' }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="id_last_name" class="field-label">名</label>
+                        <input type="text" class="form-control modern-input" id="id_last_name" name="last_name" value="{{ user_form.last_name.value|default:'' }}">
+                    </div>
+                    <div class="col-md-12">
+                        <label for="id_email" class="field-label">邮箱</label>
+                        <input type="email" class="form-control modern-input" id="id_email" name="email" value="{{ user_form.email.value|default:'' }}" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-card">
+                <div class="form-title">个人信息</div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="id_gender" class="field-label">性别</label>
+                        <select class="form-select modern-select" id="id_gender" name="gender">
+                            <option value="">请选择性别</option>
+                            {% for value, text in profile_form.gender.field.choices %}
+                                {% if value %}
+                                    <option value="{{ value }}" {% if profile_form.gender.value == value %}selected{% endif %}>{{ text }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="id_birth_date" class="field-label">出生日期</label>
+                        <input type="date" class="form-control modern-input" id="id_birth_date" name="birth_date" value="{{ profile_form.birth_date.value|date:'Y-m-d' }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="id_height" class="field-label">身高（cm）</label>
+                        <input type="number" class="form-control modern-input" id="id_height" name="height" value="{{ profile_form.height.value|default:'' }}" step="0.1" min="0" onchange="calculateBMI()">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="id_weight" class="field-label">体重（kg）</label>
+                        <input type="number" class="form-control modern-input" id="id_weight" name="weight" value="{{ profile_form.weight.value|default:'' }}" step="0.1" min="0" onchange="calculateBMI()">
+                    </div>
+                </div>
+
+                <div class="bmi-card mt-3" id="bmiDisplay" {% if not bmi_info %}style="display:none;"{% endif %}>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="bmi-label">BMI 指数</div>
+                            <div id="bmiValue" class="bmi-value
+                                {% if bmi_info.category == '正常' %}bmi-normal
+                                {% elif bmi_info.category == '偏瘦' %}bmi-underweight
+                                {% elif bmi_info.category == '超重' %}bmi-overweight
+                                {% elif bmi_info.category == '肥胖' %}bmi-obese{% endif %}">
+                                {{ bmi_info.bmi|default:'--' }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="bmi-label">身体状况</div>
+                            <div id="bmiCategory" class="bmi-value
+                                {% if bmi_info.category == '正常' %}bmi-normal
+                                {% elif bmi_info.category == '偏瘦' %}bmi-underweight
+                                {% elif bmi_info.category == '超重' %}bmi-overweight
+                                {% elif bmi_info.category == '肥胖' %}bmi-obese{% endif %}">
+                                {{ bmi_info.category|default:'--' }}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="bmi-label">年龄</div>
+                            <div class="bmi-value">{{ age|default:'--' }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-card">
+                <div class="form-title">跑步相关信息</div>
+                <div class="row g-3">
+                    <div class="col-md-12">
+                        <label for="id_running_experience" class="field-label">跑步经验</label>
+                        <select class="form-select modern-select" id="id_running_experience" name="running_experience">
+                            {% for value, text in profile_form.running_experience.field.choices %}
+                                <option value="{{ value }}" {% if profile_form.running_experience.value == value %}selected{% endif %}>{{ text }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-12">
+                        <label for="id_favorite_distance" class="field-label">偏好距离</label>
+                        <input type="text" class="form-control modern-input" id="id_favorite_distance" name="favorite_distance" value="{{ profile_form.favorite_distance.value|default:'' }}" placeholder="例如：5公里、半马、全马">
+                    </div>
+                    <div class="col-md-12">
+                        <label for="id_bio" class="field-label">个人简介</label>
+                        <textarea class="form-control modern-textarea" id="id_bio" name="bio">{{ profile_form.bio.value|default:'' }}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2 flex-wrap justify-content-end">
+                <a href="{% url 'users:security_settings' %}" class="btn btn-outline-secondary rounded-pill px-4">
+                    安全设置
+                </a>
+                <button type="submit" class="btn btn-primary rounded-pill px-4">
+                    <i class="bi bi-check2-circle me-2"></i>保存更改
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function previewAvatar(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.getElementById('avatarPreview');
+            const fallback = document.getElementById('defaultAvatar');
+
+            if (fallback) {
+                fallback.style.display = 'none';
+            }
+
+            if (preview) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            }
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function deleteAvatar() {
+    if (confirm('确定要删除头像吗？')) {
+        const form = document.createElement('form');
+        form.method = 'post';
+        form.action = '{% url "users:delete_avatar" %}';
+
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrfmiddlewaretoken';
+        csrfInput.value = '{{ csrf_token }}';
+        form.appendChild(csrfInput);
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+function calculateBMI() {
+    const height = parseFloat(document.getElementById('id_height').value);
+    const weight = parseFloat(document.getElementById('id_weight').value);
+    const bmiDisplay = document.getElementById('bmiDisplay');
+    const bmiValue = document.getElementById('bmiValue');
+    const bmiCategory = document.getElementById('bmiCategory');
+
+    if (height && weight && height > 0 && weight > 0) {
+        const heightM = height / 100;
+        const bmi = weight / (heightM * heightM);
+        const roundedBmi = bmi.toFixed(1);
+
+        let category = '';
+        let categoryClass = '';
+
+        if (bmi < 18.5) {
+            category = '偏瘦';
+            categoryClass = 'bmi-underweight';
+        } else if (bmi < 24) {
+            category = '正常';
+            categoryClass = 'bmi-normal';
+        } else if (bmi < 28) {
+            category = '超重';
+            categoryClass = 'bmi-overweight';
+        } else {
+            category = '肥胖';
+            categoryClass = 'bmi-obese';
+        }
+
+        bmiValue.textContent = roundedBmi;
+        bmiValue.className = 'bmi-value ' + categoryClass;
+        bmiCategory.textContent = category;
+        bmiCategory.className = 'bmi-value ' + categoryClass;
+        bmiDisplay.style.display = 'block';
+    } else {
+        bmiDisplay.style.display = 'none';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    calculateBMI();
+
+    const birthDateInput = document.getElementById('id_birth_date');
+    if (birthDateInput) {
+        const today = new Date().toISOString().split('T')[0];
+        birthDateInput.max = today;
+
+        const minDate = new Date();
+        minDate.setFullYear(minDate.getFullYear() - 100);
+        birthDateInput.min = minDate.toISOString().split('T')[0];
+    }
+});
+</script>
+{% endblock %}

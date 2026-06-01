@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}科学制定跑步训练计划{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="max-width: 900px;">
+    <a href="{% url 'main:home' %}" class="btn btn-outline-secondary mb-4">
+        <i class="bi bi-arrow-left"></i> 返回首页
+    </a>
+
+    <h1 class="fw-bold mb-3">科学制定跑步训练计划</h1>
+    <p class="text-muted mb-4">从训练频率、强度安排和恢复节奏三个方面，建立更稳定、更可持续的训练体系。</p>
+
+    <img src="{% static 'images/article-training-plan.jpg' %}" class="img-fluid rounded-4 mb-4" alt="跑步训练计划">
+
+    <h3 class="fw-bold mt-4">1. 先明确训练目标</h3>
+    <p>训练计划的第一步不是立刻开始加量，而是先明确目标。你是想养成规律运动习惯、提升 5 公里能力，还是为更长距离做准备？目标不同，训练安排也会不同。</p>
+
+    <h3 class="fw-bold mt-4">2. 频率比单次强度更重要</h3>
+    <p>对于大多数普通跑者来说，稳定的周训练频率比偶尔一两次很强的训练更重要。持续性训练更容易让身体建立适应，也更容易形成长期习惯。</p>
+
+    <h3 class="fw-bold mt-4">3. 轻松跑是训练基础</h3>
+    <p>很多人容易把每次跑步都跑成“有点累”，但真正有效的计划通常会让轻松跑占据相当比例。轻松跑有助于提升基础能力，同时不会让疲劳过度堆积。</p>
+
+    <h3 class="fw-bold mt-4">4. 提升训练要循序渐进</h3>
+    <p>无论是增加距离、提高频率还是加入速度训练，都应该逐步推进。突然增加太多训练刺激，往往更容易导致动作变形、疲劳累积和损伤风险上升。</p>
+
+    <h3 class="fw-bold mt-4">5. 定期复盘训练效果</h3>
+    <p>训练计划不是写完就不变的。你可以通过配速感受、恢复状态、动作分析结果和阶段性表现，判断当前训练是否合适，再决定是否调整节奏和重点。</p>
+
+    <h3 class="fw-bold mt-4">总结</h3>
+    <p>科学训练计划的核心不是复杂，而是有目标、能坚持、可调整。把训练、恢复和动作质量放进同一个系统里，你的进步会更稳定，也更不容易走弯路。</p>
+</div>
+{% endblock %}

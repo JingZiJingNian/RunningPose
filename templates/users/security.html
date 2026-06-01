@@ -1,0 +1,252 @@
+{% extends 'base.html' %}
+
+{% block title %}安全设置 - GaitFix{% endblock %}
+
+{% block extra_css %}
+<style>
+    .security-shell {
+        padding: 3rem 0 5rem;
+    }
+
+    .glass-card {
+        border: 1px solid rgba(255,255,255,.72);
+        border-radius: 28px;
+        background: rgba(255,255,255,.88);
+        box-shadow: 0 22px 50px rgba(15,23,42,.08);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+    }
+
+    .security-hero {
+        padding: 1.8rem;
+        margin-bottom: 1.4rem;
+        background: linear-gradient(135deg, rgba(79,70,229,.96), rgba(14,165,233,.90));
+        color: #fff;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .security-hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+            radial-gradient(circle at 18% 25%, rgba(255,255,255,.14), transparent 22%),
+            radial-gradient(circle at 80% 35%, rgba(255,255,255,.10), transparent 18%);
+    }
+
+    .security-hero-inner {
+        position: relative;
+        z-index: 2;
+    }
+
+    .security-kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: .45rem;
+        border-radius: 999px;
+        padding: .45rem .8rem;
+        background: rgba(255,255,255,.12);
+        border: 1px solid rgba(255,255,255,.18);
+        font-size: .88rem;
+        font-weight: 700;
+        margin-bottom: .9rem;
+    }
+
+    .security-title {
+        font-size: 2rem;
+        font-weight: 900;
+        line-height: 1.08;
+        margin-bottom: .55rem;
+        letter-spacing: -0.03em;
+    }
+
+    .security-desc {
+        color: rgba(255,255,255,.92);
+        line-height: 1.8;
+        margin: 0;
+    }
+
+    .security-grid {
+        display: grid;
+        grid-template-columns: 1.05fr .95fr;
+        gap: 1.4rem;
+        align-items: start;
+    }
+
+    .card-inner {
+        padding: 1.4rem;
+    }
+
+    .section-title {
+        font-size: 1.12rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin-bottom: .35rem;
+    }
+
+    .section-subtitle {
+        color: #64748b;
+        line-height: 1.75;
+        margin-bottom: 1rem;
+    }
+
+    .field-label {
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: .5rem;
+    }
+
+    .modern-input {
+        min-height: 54px;
+        border-radius: 18px;
+        border: 1px solid rgba(15,23,42,.10);
+        background: rgba(255,255,255,.88);
+    }
+
+    .modern-input:focus {
+        border-color: rgba(79,70,229,.42);
+        box-shadow: 0 0 0 4px rgba(79,70,229,.10);
+    }
+
+    .info-list {
+        display: grid;
+        gap: .8rem;
+    }
+
+    .info-item {
+        border-radius: 18px;
+        padding: .9rem 1rem;
+        background: rgba(255,255,255,.82);
+        border: 1px solid rgba(15,23,42,.05);
+    }
+
+    .info-label {
+        font-size: .8rem;
+        color: #64748b;
+        margin-bottom: .25rem;
+    }
+
+    .info-value {
+        color: #0f172a;
+        font-weight: 700;
+    }
+
+    @media (max-width: 1199px) {
+        .security-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container security-shell">
+    <div class="security-hero glass-card">
+        <div class="security-hero-inner">
+            <div class="security-kicker">
+                <i class="bi bi-shield-lock"></i>
+                <span>账户安全</span>
+            </div>
+            <div class="security-title">安全设置</div>
+            <p class="security-desc">
+                在这里修改密码、查看基础安全信息，并进入登录历史页面查看最近的账户访问记录。
+            </p>
+        </div>
+    </div>
+
+    <div class="security-grid">
+        <div class="glass-card card-inner">
+            <div class="section-title">修改密码</div>
+            <p class="section-subtitle">建议定期更新密码，并使用更安全、更不易猜测的组合。</p>
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label for="id_old_password" class="field-label">当前密码</label>
+                    <input type="password" class="form-control modern-input" id="id_old_password" name="old_password" required>
+                    {% if form.old_password.errors %}
+                        <div class="text-danger small mt-2">
+                            {% for error in form.old_password.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="id_new_password1" class="field-label">新密码</label>
+                    <input type="password" class="form-control modern-input" id="id_new_password1" name="new_password1" required>
+                    {% if form.new_password1.errors %}
+                        <div class="text-danger small mt-2">
+                            {% for error in form.new_password1.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-4">
+                    <label for="id_new_password2" class="field-label">确认新密码</label>
+                    <input type="password" class="form-control modern-input" id="id_new_password2" name="new_password2" required>
+                    {% if form.new_password2.errors %}
+                        <div class="text-danger small mt-2">
+                            {% for error in form.new_password2.errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="d-flex gap-2 flex-wrap">
+                    <button type="submit" class="btn btn-primary rounded-pill px-4">
+                        <i class="bi bi-check2-circle me-2"></i>修改密码
+                    </button>
+                    <a href="{% url 'users:login_history' %}" class="btn btn-outline-primary rounded-pill px-4">
+                        <i class="bi bi-clock-history me-2"></i>查看登录历史
+                    </a>
+                </div>
+            </form>
+        </div>
+
+        <div class="glass-card card-inner">
+            <div class="section-title">安全信息</div>
+            <p class="section-subtitle">以下信息可以帮助你快速了解当前账户状态。</p>
+
+            <div class="info-list">
+                <div class="info-item">
+                    <div class="info-label">最后密码修改时间</div>
+                    <div class="info-value">{{ user_profile.last_password_change|date:"Y-m-d H:i" }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">邮箱验证状态</div>
+                    <div class="info-value">
+                        {% if user_profile.email_verified %}
+                            <span class="badge bg-success">已验证</span>
+                        {% else %}
+                            <span class="badge bg-warning text-dark">未验证</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">手机验证状态</div>
+                    <div class="info-value">
+                        {% if user_profile.phone_verified %}
+                            <span class="badge bg-success">已验证</span>
+                        {% else %}
+                            <span class="badge bg-warning text-dark">未验证</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-grid gap-2 mt-4">
+                <a href="{% url 'users:profile' %}" class="btn btn-outline-secondary rounded-pill">
+                    <i class="bi bi-person me-2"></i>返回个人资料
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
